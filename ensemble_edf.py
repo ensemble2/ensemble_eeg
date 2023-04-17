@@ -2,6 +2,7 @@ import numpy as np
 from collections import namedtuple
 import warnings
 import os
+import shutil
 
 
 def _str(f, size, _):
@@ -244,3 +245,129 @@ def anonymize_edf_header(fd):
 
     assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
     os.replace(tmp_fd, fd)
+
+
+def rename_for_ensemble(fd):
+    if not os.path.isfile(fd):
+        raise FileNotFoundError("No such file or directory")
+
+    filedir = os.path.expanduser(os.path.dirname(fd))
+    if not filedir:
+        filedir = os.getcwd()
+
+    while True:
+        print(f'changing name of {fd}')
+        filename = os.path.basename(fd)
+
+        # check whether filename needs to be changed
+        do_renaming = check_filename_ensemble(filename)
+
+        if do_renaming:
+            header = read_edf_header(fd)
+
+            # get the new subject code
+            subject_code = get_subject_code()
+
+            # check type of acquisition
+            acq = get_acquisition_type(header)
+
+            # check type of session
+            ses = get_session_type()
+
+        split_new_filename = ['subj', subject_code, ses, acq, 'run-1_eeg.edf']
+        new_filename = "_".join(split_new_filename)
+
+        print(f'new filename is {new_filename}')
+        correct_filename = input('Is this correct? [Y/n]: ')
+
+        if correct_filename.lower() == 'y':
+            break
+
+    new_dirname = os.path.join(filedir, "_".join(split_new_filename[0:2]))
+    new_filename = os.path.join(new_dirname, new_filename)
+    os.mkdir(new_dirname)
+    shutil.copy(fd, new_filename)
+
+
+def check_filename_ensemble(filename):
+    """
+    Helper function to check filename and compare to the ENSEMBLE standard
+    """
+    split_filename = filename.split('_')
+    do_renaming = True
+
+    if ((split_filename[0] == 'subj') and
+            ('ses' in split_filename[2]) and
+            ('acq' in split_filename[3]) and
+            ('run' in split_filename[4]) and
+            (split_filename[-1] == 'eeg.edf')):
+        do_renaming = False
+        warnings.warn('The filename already seems to adhere to the ensemble '
+                      'and BIDS standard ')
+        continue_renaming = input('Are you sure you want to rename this file? '
+                                  '[y/N]')
+        do_renaming = continue_renaming.lower() == 'y'
+
+    return do_renaming
+
+
+def get_subject_code():
+    while True:
+        center_code = input('Please input your center code [xxx]: ')
+        if len(center_code) != 3 or not center_code.isdigit():
+            print('Center code must consist of three numbers')
+            continue
+        break
+
+    while True:
+        subject_no = input('Please input your subject number [xxxxx]: ')
+        if len(subject_no) != 5 or not subject_no.isdigit():
+            print('Subject number must consist of five numbers')
+            continue
+        break
+
+    while True:
+        sibling_number = input('Please input the sibling number [x]: ')
+        if len(sibling_number) != 1 or not sibling_number.isdigit():
+            print('Subject number must consist of one number')
+            continue
+        break
+
+    subject_code = center_code + 'E' + subject_no + sibling_number
+
+    return subject_code
+
+
+def get_acquisition_type(header):
+    if header.number_of_signals <= 4:
+        acq = 'acq-aEEG'
+        print('file automatically determined to be aEEG')
+        correct_acq = input('is this correct? [Y/n]: ')
+
+        if correct_acq.lower() == 'n':
+            acq = 'acq-cEEG'
+
+    else:
+        acq = 'acq-cEEG'
+        print('file automatically determined to be cEEG')
+        correct_acq = input('is this correct? [Y/n]: ')
+
+        if correct_acq.lower() == 'n':
+            acq = 'acq-aEEG'
+
+    return acq
+
+
+def get_session_type():
+    while 1:
+        ses_string = 'During which session was this recordig taken? ' +\
+                    '[(d)iag/(t)erm]: '
+        ses = input(ses_string)
+        if ses == 'd':
+            ses = 'ses-diag'
+            break
+        elif ses == 't':
+            ses = 'ses-term'
+            break
+
+    return ses
