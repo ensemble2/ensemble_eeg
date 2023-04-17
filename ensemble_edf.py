@@ -1,0 +1,246 @@
+import numpy as np
+from collections import namedtuple
+import warnings
+import os
+
+
+def _str(f, size, _):
+    s = f.read(size).decode('ascii', 'ignore').strip()
+    while s.endswith('\x00'):
+        s = s[:-1]
+    return s
+
+
+def _int(f, size, name):
+    s = _str(f, size, name)
+    try:
+        return int(s)
+    except ValueError:
+        warnings.warn('{name}: Could not parse integer {s}.'
+                      .format(name=name, s=s))
+
+
+def _float(f, size, name):
+    s = _str(f, size, name)
+    try:
+        return float(s)
+    except ValueError:
+        warnings.warn('{name}: Could not parse float {s}.'
+                      .format(name=name, s=s))
+
+
+def _discard(f, size, _):
+    f.read(size)
+
+
+HEADER = (
+    ('version', 8, _str),
+    ('local_patient_identification', 80, _str),
+    ('local_recording_identification', 80, _str),
+    ('startdate_of_recording', 8, _str),
+    ('starttime_of_recording', 8, _str),
+    ('number_of_bytes_in_header_record', 8, _int),
+    ('reserved', 44, _discard),
+    ('number_of_data_records', 8, _int),
+    ('duration_of_a_data_record', 8, _float),
+    ('number_of_signals', 4, _int),
+)
+
+
+SIGNAL_HEADER = (
+    ('label', 16, _str),
+    ('transducer_type', 80, _str),
+    ('physical_dimension', 8, _str),
+    ('physical_minimum', 8, _float),
+    ('physical_maximum', 8, _float),
+    ('digital_minimum', 8, _int),
+    ('digital_maximum', 8, _int),
+    ('prefiltering', 80, _str),
+    ('nr_of_samples_in_each_data_record', 8, _int),
+    ('reserved', 32, _discard)
+)
+
+INT_SIZE = 2
+HEADER_SIZE = sum([size for _, size, _ in HEADER])
+SIGNAL_HEADER_SIZE = sum([size for _, size, _ in SIGNAL_HEADER])
+
+Header = namedtuple('Header', [name for name, _, _ in HEADER] + ['signals'])
+SignalHeader = namedtuple('SignalHeader', [name for name, _, _ in
+                                           SIGNAL_HEADER])
+
+
+def read_edf_header(fd):
+    opened = False
+    if isinstance(fd, str):
+        opened = True
+        fd = open(fd, 'rb')
+
+    header = [func(fd, size, name) for name, size, func in HEADER]
+    number_of_signals = header[-1]
+    signal_headers = [[] for _ in range(number_of_signals)]
+
+    for name, size, func in SIGNAL_HEADER:
+        for signal_header in signal_headers:
+            signal_header.append(func(fd, size, name))
+
+    header.append(tuple((SignalHeader(*signal_header) for signal_header in
+                         signal_headers)))
+
+    if opened:
+        fd.close()
+
+    return Header(*header)
+
+
+def read_edf_data(fd, header):
+    opened = False
+    if isinstance(fd, str):
+        opened = True
+        fd = open(fd, 'rb')
+
+        start = 0
+        end = header.number_of_data_records
+        data_record_length = sum([signal.nr_of_samples_in_each_data_record
+                                  for signal in header.signals])
+
+        if opened:
+            fd.seek(HEADER_SIZE + header.number_of_signals *
+                    SIGNAL_HEADER_SIZE + start * data_record_length * INT_SIZE)
+
+        for _ in range(start, end):
+            a = np.fromfile(fd, count=data_record_length, dtype=np.int16)
+
+            data_record = []
+            offset = 0
+
+            for signal in header.signals:
+                data_record.append(a[offset:offset +
+                                     signal.nr_of_samples_in_each_data_record])
+                offset += signal.nr_of_samples_in_each_data_record
+
+            yield data_record
+
+    if opened:
+        fd.close()
+
+
+def write_edf_header(fd, header):
+    opened = False
+    if isinstance(fd, str):
+        fd = open(fd, 'wb')
+        opened = True
+
+        for val, (name, size, _) in zip(header, HEADER):
+            if val is None:
+                val = b'\x20' * size
+
+            if not isinstance(val, bytes):
+                if (name == 'startdate_of_recording' or name ==
+                        'starttime_of_recording') and not isinstance(val, str):
+                    val = '{:02d}.{:02d}.{:02d}'.format(
+                        val[0], val[1], val[2] % 100)
+                val = str(val).encode(encoding='ascii').ljust(size, b'\x20')
+
+            assert len(val) == size
+            fd.write(val)
+
+        for vals, (name, size, _) in zip(zip(*header.signals), SIGNAL_HEADER):
+            for val in vals:
+                if val is None:
+                    val = b'\x20' * size
+
+                if not isinstance(val, bytes):
+                    val = str(val).encode(
+                        encoding='ascii').ljust(size, b'\x20')
+
+                assert len(val) == size
+                fd.write(val)
+
+    if opened:
+        fd.close()
+
+
+def write_edf_data(fd, data_records):
+    opened = False
+    if isinstance(fd, str):
+        opened = True
+        fd = open(fd, 'ab')
+
+    try:
+        for data_record in data_records:
+            for signal in data_record:
+                signal.tofile(fd)
+    finally:
+        if opened:
+            fd.close()
+
+
+def fix_edf_header(fd):
+    header = read_edf_header(fd)
+    data = read_edf_data(fd, header)
+
+    something_to_fix = False
+    if ":" in header.startdate_of_recording:
+        warnings.warn(f'start date {header.startdate_of_recording} '
+                      'contains colon (:), changing to dot (.)')
+        header = header._replace(startdate_of_recording=header.
+                                 startdate_of_recording.replace(':', '.'))
+        something_to_fix = True
+
+    if ":" in header.starttime_of_recording:
+        warnings.warn(f'start time {header.starttime_of_recording}'
+                      'contains colon (:), changing to dot (.)')
+        header = header._replace(starttime_of_recording=header.
+                                 starttime_of_recording.replace(':', '.'))
+        something_to_fix = True
+
+    for signal in header.signals:
+        if signal.physical_maximum <= signal.physical_minimum:
+            warnings.warn(f'channel {signal.label}: physical maximum '
+                          f'({signal.physical_maximum}) is smaller or equal '
+                          f'to physical minimum ({signal.physical_minimum})')
+
+        if signal.digital_maximum <= signal.digital_minimum:
+            warnings.warn(f'channel {signal.label}: digital maximum '
+                          f'({signal.digital_maximum}) is smaller or equal '
+                          f'to digital minimum ({signal.digital_minimum})')
+
+    if something_to_fix:
+        tmp_fd = fd + "tmp"
+        write_edf_header(tmp_fd, header)
+        write_edf_data(tmp_fd, data)
+
+        assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
+        os.replace(tmp_fd, fd)
+
+
+def anonymize_edf_header(fd):
+    header = read_edf_header(fd)
+    data = read_edf_data(fd, header)
+
+    filename = os.path.basename(fd)
+    split_filename = filename.split('_')
+    is_ensemble_approved = split_filename[0] == 'subj' and \
+        len(split_filename[1]) == 10 and ('E' in split_filename[1])
+
+    anonymized_rid = 'Startdate X X X X'
+    if is_ensemble_approved:
+        pseudo_code = split_filename[1]
+        anonymized_pid = pseudo_code + ' X X X'
+    else:
+        anonymized_pid = 'X X X X'
+
+    anonymized_startdate = '01.01.85'
+    anonymized_starttime = '00.00.00'
+
+    header = header._replace(local_patient_identification=anonymized_pid,
+                             local_recording_identification=anonymized_rid,
+                             startdate_of_recording=anonymized_startdate,
+                             starttime_of_recording=anonymized_starttime)
+
+    tmp_fd = fd + 'tmp'
+    write_edf_header(tmp_fd, header)
+    write_edf_data(tmp_fd, data)
+
+    assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
+    os.replace(tmp_fd, fd)
