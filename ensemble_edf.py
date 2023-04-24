@@ -119,7 +119,7 @@ def read_edf_data(fd, header):
                                      signal.nr_of_samples_in_each_data_record])
                 offset += signal.nr_of_samples_in_each_data_record
 
-            yield data_record
+        yield data_record
 
     if opened:
         fd.close()
@@ -162,6 +162,14 @@ def write_edf_header(fd, header):
 
 
 def write_edf_data(fd, data_records):
+    """Function to check and fix edf files according to EDF plus standards
+
+    Args:
+        fd (str): (Relative) path to file to write.
+        data_records (array): Variable with data_records to write to edf file\
+            is output from read_edf_data function
+
+    """
     opened = False
     if isinstance(fd, str):
         opened = True
@@ -177,6 +185,12 @@ def write_edf_data(fd, data_records):
 
 
 def fix_edf_header(fd):
+    """Function to check and fix edf files according to EDF plus standards
+
+    Args:
+        fd (str): (Relative) path to file to rename.
+
+    """
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
 
@@ -216,6 +230,12 @@ def fix_edf_header(fd):
 
 
 def anonymize_edf_header(fd):
+    """Function to anonymize edf files according to ENSEMBLE and BIDS standards
+
+    Args:
+    fd (str): (Relative) path to file to rename.
+
+    """
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
 
@@ -248,6 +268,12 @@ def anonymize_edf_header(fd):
 
 
 def rename_for_ensemble(fd):
+    """Function to rename edf files according to ENSEMBLE and BIDS standards
+
+    Args:
+        fd (str): (Relative) path to file to rename.
+
+    """
     if not os.path.isfile(fd):
         raise FileNotFoundError("No such file or directory")
 
@@ -283,10 +309,17 @@ def rename_for_ensemble(fd):
         if correct_filename.lower() == 'y':
             break
 
+    # Create new directory and copy renamed file
     new_dirname = os.path.join(filedir, "_".join(split_new_filename[0:2]))
     new_filename = os.path.join(new_dirname, new_filename)
-    os.mkdir(new_dirname)
-    shutil.copy(fd, new_filename)
+
+    if not os.path.isdir(new_dirname):
+        os.mkdir(new_dirname)
+
+    if os.path.isfile(new_filename):
+        raise FileExistsError("File already exists, not overwriting")
+    else:
+        shutil.copy(fd, new_filename)
 
 
 def check_filename_ensemble(filename):
@@ -312,6 +345,11 @@ def check_filename_ensemble(filename):
 
 
 def get_subject_code():
+    """
+    Helper code to get subject code with user input
+    """
+
+    # Get center code
     while True:
         center_code = input('Please input your center code [xxx]: ')
         if len(center_code) != 3 or not center_code.isdigit():
@@ -319,6 +357,7 @@ def get_subject_code():
             continue
         break
 
+    # Get subject number
     while True:
         subject_no = input('Please input your subject number [xxxxx]: ')
         if len(subject_no) != 5 or not subject_no.isdigit():
@@ -326,6 +365,7 @@ def get_subject_code():
             continue
         break
 
+    # Get sibling number
     while True:
         sibling_number = input('Please input the sibling number [x]: ')
         if len(sibling_number) != 1 or not sibling_number.isdigit():
@@ -339,6 +379,11 @@ def get_subject_code():
 
 
 def get_acquisition_type(header):
+    """
+    Helper code to get acquisition type with user input
+    """
+
+    # Check number of signals in file
     if header.number_of_signals <= 4:
         acq = 'acq-aEEG'
         print('file automatically determined to be aEEG')
@@ -359,6 +404,9 @@ def get_acquisition_type(header):
 
 
 def get_session_type():
+    """
+    Helper code to get session type with user input
+    """
     while 1:
         ses_string = 'During which session was this recordig taken? ' +\
                     '[(d)iag/(t)erm]: '
