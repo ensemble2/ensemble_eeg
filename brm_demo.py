@@ -3,7 +3,8 @@ from importlib import reload
 import glob
 reload(brm_to_edf)
 
-fd = '/Users/bauke/_Research/EEG_aEEG/0002_2.brm'
+files = glob.glob('/Users/bauke/_Research/EEG_aEEG/*.brm')
+files = files[0:3]
 
-brm_to_edf.convert_brm_to_edf(fd)
-
+for file in files:
+    brm_to_edf.convert_brm_to_edf(file, is_fs_64hz=False)
