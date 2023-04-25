@@ -9,8 +9,6 @@ import numpy as np
 from datetime import datetime, timezone
 import ensemble_edf
 
-fd = "/Users/bauke/_Research/aEEG_check/115-044-249-1_1_1_RAW.brm"
-
 
 def convert_brm_to_edf(fd, is_fs_64hz=None):
     filename = os.path.basename(fd)
