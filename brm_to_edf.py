@@ -12,8 +12,8 @@ import ensemble_edf
 fd = "/Users/bauke/_Research/aEEG_check/115-044-249-1_1_1_RAW.brm"
 
 
-def convert_brm_to_edf(fd):
-    filename = os.path.splitext(os.path.basename(fd))[0]
+def convert_brm_to_edf(fd, is_fs_64hz=None):
+    filename = os.path.basename(fd)
     file_exists = os.path.isfile(fd)
 
     if file_exists:
@@ -22,6 +22,8 @@ def convert_brm_to_edf(fd):
         if os.path.isdir(tmp_dir):
             shutil.rmtree(tmp_dir)
 
+        print(f'{filename}')
+        print(f'\tUnzipping to temporary directory')
         with zipfile.ZipFile(fd, 'r') as zip_ref:
             zip_ref.extractall(tmp_dir)
 
@@ -31,14 +33,15 @@ def convert_brm_to_edf(fd):
         device = parse_xml(device_xml)
 
         dat_files = []
-        is_fs_64hz =\
-            input('is the sampling frequency 64 Hz? [y/N]: ').lower() == 'y'
+        if is_fs_64hz == None:
+            is_fs_64hz =\
+                input('is the sampling frequency 64 Hz? [y/N]: ').lower() == 'y'
 
         if is_fs_64hz:
             dat_files.append(glob.glob(
                 os.path.join(tmp_dir, 'DATA_RAW_EEG_LEFT*.dat')))
             dat_files.append(glob.glob(
-              os.path.join(tmp_dir, 'DATA_RAW_EEG_RIGHT*.dat')))
+            os.path.join(tmp_dir, 'DATA_RAW_EEG_RIGHT*.dat')))
         else:
             dat_files_left = glob.glob(
                 os.path.join(tmp_dir, 'DATA_RAW_EEG_ELECTRODE_LEFT*.dat'))
@@ -65,11 +68,15 @@ def convert_brm_to_edf(fd):
             header = ensemble_edf.Header(*hdr, signal_header)
 
             # write header to file
+            print(f'\tprint header to {output_filename}')
             ensemble_edf.write_edf_header(output_filename, header)
 
             # write data to file
+            print(f'\tprint data records to {output_filename}')
             write_brm_data_to_edf(output_filename, data)
-        # TODO: finish up this piece of code
+
+        print('\tremoving temporary directory')
+        shutil.rmtree(tmp_dir)
     else:
         raise ValueError('file not found')
 
@@ -119,7 +126,7 @@ def extract_brm_file(index, device, dat_files):
         df = os.path.basename(dat_file)
         file = index.FileDescription[filenames.index(df)]
         file = file._replace(FileName=dat_file)
-        print(f'Extracting {df} datastream')
+        print(f'\textracting {df} datastream')
         data[counter] = get_brm_data(file, device)
         counter = counter + 1
 
