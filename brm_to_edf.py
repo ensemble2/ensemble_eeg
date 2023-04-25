@@ -23,7 +23,7 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
             shutil.rmtree(tmp_dir)
 
         print(f'{filename}')
-        print(f'\tUnzipping to temporary directory')
+        print('\tUnzipping to temporary directory')
         with zipfile.ZipFile(fd, 'r') as zip_ref:
             zip_ref.extractall(tmp_dir)
 
@@ -33,15 +33,15 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
         device = parse_xml(device_xml)
 
         dat_files = []
-        if is_fs_64hz == None:
-            is_fs_64hz =\
-                input('is the sampling frequency 64 Hz? [y/N]: ').lower() == 'y'
+        if is_fs_64hz is None:
+            is_fs_64hz = input('is the sampling '
+                               'frequency 64 Hz? [y/N]: ').lower() == 'y'
 
         if is_fs_64hz:
             dat_files.append(glob.glob(
                 os.path.join(tmp_dir, 'DATA_RAW_EEG_LEFT*.dat')))
             dat_files.append(glob.glob(
-            os.path.join(tmp_dir, 'DATA_RAW_EEG_RIGHT*.dat')))
+                os.path.join(tmp_dir, 'DATA_RAW_EEG_RIGHT*.dat')))
         else:
             dat_files_left = glob.glob(
                 os.path.join(tmp_dir, 'DATA_RAW_EEG_ELECTRODE_LEFT*.dat'))
