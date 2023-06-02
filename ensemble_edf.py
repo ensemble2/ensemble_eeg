@@ -84,8 +84,8 @@ def read_edf_header(fd):
         for signal_header in signal_headers:
             signal_header.append(func(fd, size, name))
 
-    header.append(tuple((SignalHeader(*signal_header) for signal_header in
-                         signal_headers)))
+    header.append(tuple(SignalHeader(*signal_header) for signal_header in
+                        signal_headers))
 
     if opened:
         fd.close()
