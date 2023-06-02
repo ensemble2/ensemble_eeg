@@ -353,7 +353,7 @@ def get_subject_code():
     while True:
         center_code = input('Please input your center code [xxx]: ')
         if len(center_code) != 3 or not center_code.isdigit():
-            print('Center code must consist of three numbers')
+            print('Center code must consist of three digits')
             continue
         break
 
@@ -361,7 +361,7 @@ def get_subject_code():
     while True:
         subject_no = input('Please input your subject number [xxxxx]: ')
         if len(subject_no) != 5 or not subject_no.isdigit():
-            print('Subject number must consist of five numbers')
+            print('Subject number must consist of five digits')
             continue
         break
 
@@ -369,7 +369,7 @@ def get_subject_code():
     while True:
         sibling_number = input('Please input the sibling number [x]: ')
         if len(sibling_number) != 1 or not sibling_number.isdigit():
-            print('Subject number must consist of one number')
+            print('Subject number must consist of a single digit')
             continue
         break
 
