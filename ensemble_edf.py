@@ -349,11 +349,11 @@ def get_subject_code():
     Helper code to get subject code with user input
     """
 
-    # Get center code
+    # Get centre code
     while True:
-        center_code = input('Please input your center code [xxx]: ')
-        if len(center_code) != 3 or not center_code.isdigit():
-            print('Center code must consist of three digits')
+        centre_code = input('Please input your centre code [xxx]: ')
+        if len(centre_code) != 3 or not centre_code.isdigit():
+            print('Centre code must consist of three digits')
             continue
         break
 
@@ -373,7 +373,7 @@ def get_subject_code():
             continue
         break
 
-    subject_code = center_code + 'E' + subject_number + sibling_number
+    subject_code = centre_code + 'E' + subject_number + sibling_number
 
     return subject_code
 
