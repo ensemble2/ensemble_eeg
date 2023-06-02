@@ -1,6 +1,8 @@
-import brm_to_edf
-from importlib import reload
 import glob
+from importlib import reload
+
+import brm_to_edf
+
 reload(brm_to_edf)
 
 files = glob.glob('/Users/bauke/_Research/EEG_aEEG/*.brm')
