@@ -385,20 +385,20 @@ def get_acquisition_type(header):
 
     # Check number of signals in file
     if header.number_of_signals <= 4:
-        acq = 'acq-aEEG'
+        acq = 'acq-aeeg'
         print('file automatically determined to be aEEG')
         correct_acq = input('is this correct? [Y/n]: ')
 
         if correct_acq.lower() == 'n':
-            acq = 'acq-cEEG'
+            acq = 'acq-ceeg'
 
     else:
-        acq = 'acq-cEEG'
+        acq = 'acq-ceeg'
         print('file automatically determined to be cEEG')
         correct_acq = input('is this correct? [Y/n]: ')
 
         if correct_acq.lower() == 'n':
-            acq = 'acq-aEEG'
+            acq = 'acq-aeeg'
 
     return acq
 
