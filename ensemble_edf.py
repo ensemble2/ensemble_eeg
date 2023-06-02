@@ -359,8 +359,8 @@ def get_subject_code():
 
     # Get subject number
     while True:
-        subject_no = input('Please input your subject number [xxxxx]: ')
-        if len(subject_no) != 5 or not subject_no.isdigit():
+        subject_number = input('Please input your subject number [xxxxx]: ')
+        if len(subject_number) != 5 or not subject_number.isdigit():
             print('Subject number must consist of five digits')
             continue
         break
@@ -373,7 +373,7 @@ def get_subject_code():
             continue
         break
 
-    subject_code = center_code + 'E' + subject_no + sibling_number
+    subject_code = center_code + 'E' + subject_number + sibling_number
 
     return subject_code
 
