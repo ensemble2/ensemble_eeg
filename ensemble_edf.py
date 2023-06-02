@@ -369,7 +369,7 @@ def get_subject_code():
     while True:
         sibling_number = input('Please input the sibling number [x]: ')
         if len(sibling_number) != 1 or not sibling_number.isdigit():
-            print('Subject number must consist of a single digit')
+            print('Sibling number must consist of a single digit')
             continue
         break
 
