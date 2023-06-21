@@ -1,8 +1,9 @@
-import numpy as np
-from collections import namedtuple
-import warnings
 import os
 import shutil
+import warnings
+from collections import namedtuple
+
+import numpy as np
 
 
 def _str(f, size, _):
