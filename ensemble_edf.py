@@ -385,20 +385,20 @@ def get_acquisition_type(header):
 
     # Check number of signals in file
     if header.number_of_signals <= 4:
-        acq = 'acq-aEEG'
+        acq = 'acq-aeeg'
         print('file automatically determined to be aEEG')
-        correct_acq = input('is this correct? [Y/n]: ')
+        correct_acq = input('is this correct? [Y/n]: ').lower()
 
-        if correct_acq.lower() == 'n':
-            acq = 'acq-cEEG'
+        if correct_acq == 'n':
+            acq = 'acq-ceeg'
 
     else:
-        acq = 'acq-cEEG'
+        acq = 'acq-ceeg'
         print('file automatically determined to be cEEG')
-        correct_acq = input('is this correct? [Y/n]: ')
+        correct_acq = input('is this correct? [Y/n]: ').lower()
 
-        if correct_acq.lower() == 'n':
-            acq = 'acq-aEEG'
+        if correct_acq == 'n':
+            acq = 'acq-aeeg'
 
     return acq
 
@@ -410,11 +410,11 @@ def get_session_type():
     while 1:
         ses_string = 'During which session was this recordig taken? ' +\
                     '[(d)iag/(t)erm]: '
-        ses = input(ses_string)
-        if ses == 'd':
+        ses = input(ses_string).lower()
+        if ses == 'd' or ses == 'diag':
             ses = 'ses-diag'
             break
-        elif ses == 't':
+        elif ses == 't' or ses == 'term':
             ses = 'ses-term'
             break
 
