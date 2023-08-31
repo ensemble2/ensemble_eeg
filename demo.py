@@ -1,6 +1,8 @@
-import ensemble_edf
-from importlib import reload
 import glob
+from importlib import reload
+
+import ensemble_edf
+
 reload(ensemble_edf)
 
 files = glob.glob(

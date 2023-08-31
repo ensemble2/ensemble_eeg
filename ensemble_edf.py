@@ -1,8 +1,9 @@
-import numpy as np
-from collections import namedtuple
-import warnings
 import os
 import shutil
+import warnings
+from collections import namedtuple
+
+import numpy as np
 
 
 def _str(f, size, _):
@@ -84,8 +85,8 @@ def read_edf_header(fd):
         for signal_header in signal_headers:
             signal_header.append(func(fd, size, name))
 
-    header.append(tuple((SignalHeader(*signal_header) for signal_header in
-                         signal_headers)))
+    header.append(tuple(SignalHeader(*signal_header) for signal_header in
+                        signal_headers))
 
     if opened:
         fd.close()
@@ -349,19 +350,19 @@ def get_subject_code():
     Helper code to get subject code with user input
     """
 
-    # Get center code
+    # Get centre code
     while True:
-        center_code = input('Please input your center code [xxx]: ')
-        if len(center_code) != 3 or not center_code.isdigit():
-            print('Center code must consist of three numbers')
+        centre_code = input('Please input your centre code [xxx]: ')
+        if len(centre_code) != 3 or not centre_code.isdigit():
+            print('Centre code must consist of three digits')
             continue
         break
 
     # Get subject number
     while True:
-        subject_no = input('Please input your subject number [xxxxx]: ')
-        if len(subject_no) != 5 or not subject_no.isdigit():
-            print('Subject number must consist of five numbers')
+        subject_number = input('Please input your subject number [xxxxx]: ')
+        if len(subject_number) != 5 or not subject_number.isdigit():
+            print('Subject number must consist of five digits')
             continue
         break
 
@@ -369,11 +370,11 @@ def get_subject_code():
     while True:
         sibling_number = input('Please input the sibling number [x]: ')
         if len(sibling_number) != 1 or not sibling_number.isdigit():
-            print('Subject number must consist of one number')
+            print('Sibling number must consist of a single digit')
             continue
         break
 
-    subject_code = center_code + 'E' + subject_no + sibling_number
+    subject_code = centre_code + 'E' + subject_number + sibling_number
 
     return subject_code
 
@@ -385,20 +386,20 @@ def get_acquisition_type(header):
 
     # Check number of signals in file
     if header.number_of_signals <= 4:
-        acq = 'acq-aEEG'
+        acq = 'acq-aeeg'
         print('file automatically determined to be aEEG')
-        correct_acq = input('is this correct? [Y/n]: ')
+        correct_acq = input('is this correct? [Y/n]: ').lower()
 
-        if correct_acq.lower() == 'n':
-            acq = 'acq-cEEG'
+        if correct_acq == 'n':
+            acq = 'acq-ceeg'
 
     else:
-        acq = 'acq-cEEG'
+        acq = 'acq-ceeg'
         print('file automatically determined to be cEEG')
-        correct_acq = input('is this correct? [Y/n]: ')
+        correct_acq = input('is this correct? [Y/n]: ').lower()
 
-        if correct_acq.lower() == 'n':
-            acq = 'acq-aEEG'
+        if correct_acq == 'n':
+            acq = 'acq-aeeg'
 
     return acq
 
@@ -410,11 +411,11 @@ def get_session_type():
     while 1:
         ses_string = 'During which session was this recordig taken? ' +\
                     '[(d)iag/(t)erm]: '
-        ses = input(ses_string)
-        if ses == 'd':
+        ses = input(ses_string).lower()
+        if ses == 'd' or ses == 'diag':
             ses = 'ses-diag'
             break
-        elif ses == 't':
+        elif ses == 't' or ses == 'term':
             ses = 'ses-term'
             break
 

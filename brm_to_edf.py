@@ -1,12 +1,13 @@
-import zipfile
-import defusedxml.ElementTree as ET
-from collections import Counter
 import glob
 import os
-from collections import namedtuple
 import shutil
-import numpy as np
+import zipfile
+from collections import Counter, namedtuple
 from datetime import datetime, timezone
+
+import defusedxml.ElementTree as ET
+import numpy as np
+
 import ensemble_edf
 
 
