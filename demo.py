@@ -1,10 +1,8 @@
 import glob
-from importlib import reload
 import ensemble_edf
+import os
 
-reload(ensemble_edf)
-
-files = glob.glob("/Users/bvelde3/_Research/aEEG_check/subj-101E000021/*.edf")
+files = glob.glob(os.path.join("EDFfolder", "*.edf"))
 
 for file in files:
     ensemble_edf.fix_edf_header(file)
