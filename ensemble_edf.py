@@ -69,6 +69,19 @@ SignalHeader = namedtuple("SignalHeader", [name for name, _, _ in SIGNAL_HEADER]
 
 
 def read_edf_header(fd):
+    """
+    Reads the header of an EDF file.
+
+    Parameters:
+        fd (str or file-like object): The file descriptor or the path to the EDF file.
+
+    Returns:
+        Header: The header of the EDF file, including information about the signals.
+
+    Raises:
+        FileNotFoundError: If the file specified by `fd` does not exist.
+        ValueError: If `fd` is not a valid EDF file.
+    """
     opened = False
     if isinstance(fd, str):
         opened = True
@@ -93,6 +106,19 @@ def read_edf_header(fd):
 
 
 def read_edf_data(fd, header):
+    """
+    Reads EDF data from a file or file-like object.
+
+    Parameters:
+        fd (str or file-like object): The file path or file-like object to read the EDF data from.
+        header (Header): The EDF header object containing information about the data.
+
+    Returns:
+        generator: A generator that yields each data record as a list of signals.
+
+    Raises:
+        IOError: If there was an error opening or reading the EDF file.
+    """
     opened = False
     if isinstance(fd, str):
         opened = True
@@ -130,6 +156,19 @@ def read_edf_data(fd, header):
 
 
 def write_edf_header(fd, header):
+    """
+    Writes the EDF header to the specified file-like object or file path.
+
+    Args:
+        fd (str): (Relative) path to file to write.
+        header: The header information to write.
+
+    Raises:
+        AssertionError: If the length of the value to write is not equal to the expected size.
+
+    Returns:
+        None
+    """
     opened = False
     if isinstance(fd, str):
         fd = open(fd, "wb")
@@ -188,11 +227,14 @@ def write_edf_data(fd, data_records):
 
 
 def fix_edf_header(fd):
-    """Function to check and fix edf files according to EDF plus standards
+    """
+    Fix the EDF header.
 
     Args:
-        fd (str): (Relative) path to file to rename.
+        fd (file object): The file descriptor for the EDF file.
 
+    Returns:
+        None
     """
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
@@ -343,6 +385,10 @@ def rename_for_ensemble(fd):
 def check_filename_ensemble(filename):
     """
     Helper function to check filename and compare to the ENSEMBLE standard
+
+     Args:
+        fd (str): (Relative) path to file to rename.
+
     """
     split_filename = filename.split("_")
     do_renaming = True
@@ -400,9 +446,14 @@ def get_subject_code():
 
 def get_acquisition_type(header):
     """
-    Helper code to get acquisition type with user input
-    """
+    Helper code to get acquisition type with user input or header information.
 
+    Args:
+        header: The header information of the file.
+
+    Returns:
+        acq: The determined acquisition type.
+    """
     # Check number of signals in file
     if header.number_of_signals <= 4:
         acq = "acq-aeeg"
