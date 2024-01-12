@@ -236,6 +236,12 @@ def fix_edf_header(fd):
     Returns:
         None
     """
+
+    if not (os.path.isfile(fd)):
+        raise FileNotFoundError("No such file or directory")
+    else:
+        print(f"fixing header for {fd} ... ", end="", flush=True)
+
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
 
@@ -283,6 +289,8 @@ def fix_edf_header(fd):
         assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
         os.replace(tmp_fd, fd)
 
+    print("done")
+
 
 def anonymize_edf_header(fd):
     """Function to anonymize edf files according to ENSEMBLE and BIDS standards
@@ -291,6 +299,11 @@ def anonymize_edf_header(fd):
     fd (str): (Relative) path to file to rename.
 
     """
+    if not (os.path.isfile(fd)):
+        raise FileNotFoundError("No such file or directory")
+    else:
+        print(f"anonymizing {fd} ... ", end="", flush=True)
+
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
 
@@ -325,6 +338,7 @@ def anonymize_edf_header(fd):
 
     assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
     os.replace(tmp_fd, fd)
+    print("done")
 
 
 def rename_for_ensemble(fd):
