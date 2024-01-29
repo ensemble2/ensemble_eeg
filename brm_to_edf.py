@@ -44,25 +44,29 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
         device_xml = os.path.join(tmp_dir, "device.xml")
         device = parse_xml(device_xml)
 
-        dat_files = []
+        dat_files_left = []
+        dat_files_right = []
+
         if is_fs_64hz is None:
             is_fs_64hz = (
                 input("is the sampling " "frequency 64 Hz? [y/N]: ").lower() == "y"
             )
 
         if is_fs_64hz:
-            dat_files.append(glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_LEFT*.dat")))
-            dat_files.append(
+            dat_files_left.append(
+                glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_LEFT*.dat"))
+            )
+            dat_files_right.append(
                 glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_RIGHT*.dat"))
             )
-        else:
-            dat_files_left = glob.glob(
-                os.path.join(tmp_dir, "DATA_RAW_EEG_ELECTRODE_LEFT*.dat")
-            )
-            dat_files_right = glob.glob(
-                os.path.join(tmp_dir, "DATA_RAW_EEG_ELECTRODE_RIGHT*.dat")
-            )
 
+        else:
+            dat_files_left = sorted(
+                glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_ELECTRODE_LEFT*.dat"))
+            )
+            dat_files_right = sorted(
+                glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_ELECTRODE_RIGHT*.dat"))
+            )
         n_data_files_left = len(dat_files_left)
         n_data_files_right = len(dat_files_right)
 
@@ -253,12 +257,16 @@ def prepare_edf_header(data):
     version = "0"
     PID = "X X X X"
     RID = "Startdate X X X X"
-    start_date = datetime.strftime(
-        datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%d.%m.%y"
-    )
-    start_time = datetime.strftime(
-        datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%H.%M.%S"
-    )
+    # start_date = datetime.strftime(
+    #     datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%d.%m.%y"
+    # )
+    # start_time = datetime.strftime(
+    #     datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%H.%M.%S"
+    # )
+
+    start_date = "01.01.85"
+    start_time = "00.00.00"
+
     bytes_in_header = (
         ensemble_edf.HEADER_SIZE + n_channels * ensemble_edf.SIGNAL_HEADER_SIZE
     )
