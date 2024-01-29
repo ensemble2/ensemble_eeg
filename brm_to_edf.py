@@ -53,10 +53,10 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
             )
 
         if is_fs_64hz:
-            dat_files_left.append(
+            dat_files_left = sorted(
                 glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_LEFT*.dat"))
             )
-            dat_files_right.append(
+            dat_files_right = sorted(
                 glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_RIGHT*.dat"))
             )
 
@@ -67,6 +67,7 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
             dat_files_right = sorted(
                 glob.glob(os.path.join(tmp_dir, "DATA_RAW_EEG_ELECTRODE_RIGHT*.dat"))
             )
+
         n_data_files_left = len(dat_files_left)
         n_data_files_right = len(dat_files_right)
 
