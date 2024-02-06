@@ -374,7 +374,7 @@ def rename_for_ensemble(fd):
             # check type of session
             ses = get_session_type()
 
-        split_new_filename = ["subj", subject_code, ses, acq, "run-1_eeg.edf"]
+        split_new_filename = [subject_code, ses, acq, "run-1_eeg.edf"]
         new_filename = "_".join(split_new_filename)
 
         print(f"new filename is {new_filename}")
@@ -384,7 +384,7 @@ def rename_for_ensemble(fd):
             break
 
     # Create new directory and copy renamed file
-    new_dirname = os.path.join(filedir, "_".join(split_new_filename[0:2]))
+    new_dirname = os.path.join(filedir, subject_code)
     new_filename = os.path.join(new_dirname, new_filename)
 
     if not os.path.isdir(new_dirname):
@@ -453,7 +453,7 @@ def get_subject_code():
             continue
         break
 
-    subject_code = centre_code + "E" + subject_number + sibling_number
+    subject_code = "sub-" + centre_code + "E" + subject_number + sibling_number
 
     return subject_code
 
