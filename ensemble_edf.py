@@ -391,7 +391,7 @@ def rename_for_ensemble(fd):
         os.mkdir(new_dirname)
 
     if os.path.isfile(new_filename):
-        raise FileExistsError("File already exists, not overwriting")
+        print("File already exists, not overwriting")
     else:
         shutil.copy(fd, new_filename)
 
