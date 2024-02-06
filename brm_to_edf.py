@@ -41,7 +41,7 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
 
         index_xml = os.path.join(tmp_dir, "BRM_Index.xml")
         index = parse_xml(index_xml)
-        device_xml = os.path.join(tmp_dir, "device.xml")
+        device_xml = os.path.join(tmp_dir, "Device.xml")
         device = parse_xml(device_xml)
 
         dat_files_left = []
