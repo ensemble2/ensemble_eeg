@@ -322,7 +322,7 @@ def prepare_edf_signal_header(data, device):
         physical_dimension = units
         physical_min = round(-5e6 / float(device.Channel[ichan].Gain) / 2)
         physical_max = round(5e6 / float(device.Channel[ichan].Gain) / 2)
-        digital_min = -(2**15 - 1)
+        digital_min = -(2**15)
         digital_max = 2**15 - 1
         prefiltering = None
         nr_samples = data[i].sampleHz
