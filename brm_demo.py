@@ -5,7 +5,7 @@ import brm_to_edf
 reload(brm_to_edf)
 
 files = glob.glob(
-    "/Users/bvelde3/_Research/EEG_Ensemble_WKZ/Data/*.brm"
+    "/Users/bvelde3/_Research/EEG_Ensemble/WKZ/Data/*.brm"
 )  # Change this to where your BRM files are
 
 for file in files:
