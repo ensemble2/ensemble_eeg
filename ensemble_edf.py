@@ -105,7 +105,7 @@ def read_edf_header(fd):
     return Header(*header)
 
 
-def read_edf_data(fd, header):
+def read_edf_data(fd, header, chans="all"):
     """
     Reads EDF data from a file or file-like object.
 
@@ -126,6 +126,10 @@ def read_edf_data(fd, header):
 
         start = 0
         end = header.number_of_data_records
+
+        if chans == "all":
+            chans = list(range(header.number_of_signals))
+
         data_record_length = sum(
             [signal.nr_of_samples_in_each_data_record for signal in header.signals]
         )
@@ -140,14 +144,17 @@ def read_edf_data(fd, header):
         for _ in range(start, end):
             a = np.fromfile(fd, count=data_record_length, dtype=np.int16)
 
-            data_record = []
             offset = 0
-
+            chan_nr = 0
+            data_record = []
             for signal in header.signals:
-                data_record.append(
-                    a[offset : offset + signal.nr_of_samples_in_each_data_record]
-                )
+                if chan_nr in chans:
+                    data_record.append(
+                        a[offset : offset + signal.nr_of_samples_in_each_data_record]
+                    )
+
                 offset += signal.nr_of_samples_in_each_data_record
+                chan_nr += 1
 
             yield data_record
 
@@ -221,9 +228,8 @@ def write_edf_data(fd, data_records):
                 signal.tofile(fd)
     # try:
 
-    # finally:
-    #     if opened:
-    #         fd.close()
+    if opened:
+        fd.close()
 
 
 def fix_edf_header(fd):
@@ -238,7 +244,7 @@ def fix_edf_header(fd):
     """
 
     if not (os.path.isfile(fd)):
-        raise FileNotFoundError("No such file or directory")
+        raise FileNotFoundError(fd)
     else:
         print(f"fixing header for {fd} ... ", end="", flush=True)
 
@@ -293,21 +299,26 @@ def fix_edf_header(fd):
 
 
 def anonymize_edf_header(fd):
-    """Function to anonymize edf files according to ENSEMBLE and BIDS standards
+    """Function to anonymize edf files according to ENSEMBLE and BIDS standards.
+    The output file will be appended with ANONYMIZED in the filename. Please
+    make sure to only upload the anonymized files.
+
 
     Args:
     fd (str): (Relative) path to file to rename.
 
     """
     if not (os.path.isfile(fd)):
-        raise FileNotFoundError("No such file or directory")
+        raise FileNotFoundError(fd)
     else:
         print(f"anonymizing {fd} ... ", end="", flush=True)
 
     header = read_edf_header(fd)
     data = read_edf_data(fd, header)
 
-    filename = os.path.basename(fd)
+    filename = os.path.splitext(os.path.basename(fd))[0]
+    ext = os.path.splitext(os.path.basename(fd))[1]
+    folder = os.path.dirname(fd)
     split_filename = filename.split("_")
     is_ensemble_approved = (
         split_filename[0] == "subj"
@@ -332,12 +343,10 @@ def anonymize_edf_header(fd):
         starttime_of_recording=anonymized_starttime,
     )
 
-    tmp_fd = fd + "tmp"
-    write_edf_header(tmp_fd, header)
-    write_edf_data(tmp_fd, data)
+    fd_out = os.path.join(folder, filename + "_ANONYMIZED" + ext)
+    write_edf_header(fd_out, header)
+    write_edf_data(fd_out, data)
 
-    assert os.path.getsize(tmp_fd) == os.path.getsize(fd)
-    os.replace(tmp_fd, fd)
     print("done")
 
 
@@ -349,7 +358,7 @@ def rename_for_ensemble(fd):
 
     """
     if not os.path.isfile(fd):
-        raise FileNotFoundError("No such file or directory")
+        raise FileNotFoundError(fd)
 
     filedir = os.path.expanduser(os.path.dirname(fd))
     if not filedir:
@@ -394,6 +403,90 @@ def rename_for_ensemble(fd):
         print("File already exists, not overwriting")
     else:
         shutil.copy(fd, new_filename)
+
+
+def combine_aeeg_channels(fd_left, fd_right, new_filename="two_channel_aeeg"):
+    """
+    Combine left and right aEEG channels into a single edf file.
+
+    Args:
+        fd_left (str): The file path of the left aEEG channel.
+        fd_right (str): The file path of the right aEEG channel.
+        new_filename (str, optional): The name of the new combined file. Defaults to "two_channel_aeeg".
+
+    Raises:
+        FileNotFoundError: If fd_left or fd_right is not a valid file path.
+    """
+    if not os.path.isfile(fd_left):
+        raise FileNotFoundError(fd_left)
+    elif not os.path.isfile(fd_right):
+        raise FileNotFoundError(fd_right)
+
+    filename_left = os.path.basename(fd_left)
+    filename_right = os.path.basename(fd_right)
+    print(f"Combining {filename_left} and {filename_right} ... ", end="", flush=True)
+
+    output_dir = os.path.dirname(fd_left)
+    path_to_file = os.path.join(output_dir, new_filename + ".edf")
+
+    hdr_left = read_edf_header(fd_left)
+    hdr_right = read_edf_header(fd_right)
+
+    opened = False
+    if isinstance(fd_left, str):
+        opened = True
+        fd = open(fd_left, "rb")
+
+    # create new header by combining left and right channel headers, get the
+    # annotation channel from right channel
+    header = [func(fd, size, name) for name, size, func in HEADER]
+
+    # create new signal headers
+    signal_headers_left = [hdr_left.signals[0]]
+    signal_headers_right = [signal for signal in hdr_right.signals]
+    signal_headers = signal_headers_left + signal_headers_right
+    header[-1] = len(signal_headers)
+    header.append(
+        tuple(SignalHeader(*signal_header) for signal_header in signal_headers)
+    )
+
+    # calculate new header length
+    header_length = HEADER_SIZE + len(signal_headers) * SIGNAL_HEADER_SIZE
+    header[5] = header_length
+
+    # read in data from both left and right channels, read - if possible -
+    # annotation channel from right channel edf file
+    labels_left = [signal.label for signal in hdr_left.signals]
+    chans = list(range(hdr_left.number_of_signals))
+    if "EDF Annotations" in labels_left:
+        chans.remove(labels_left.index("EDF Annotations"))
+
+    data_left = list(read_edf_data(fd_left, hdr_left, chans=chans))
+    data_right = list(read_edf_data(fd_right, hdr_right))
+
+    # append channels
+    data_all = append_channels(data_left, data_right)
+
+    write_edf_header(path_to_file, Header(*header))
+    write_edf_data(path_to_file, data_all)
+
+    if opened:
+        fd.close()
+
+    print("done")
+
+
+def append_channels(data_left, data_right):
+    """
+    This function takes two lists of data and appends the corresponding elements from the second list to the elements in the first list. It yields the appended elements.
+    """
+    counter = 0
+    for _ in range(len(data_left)):
+        dat_out = data_left[counter]
+        dat_out.extend(data_right[counter])
+        counter += 1
+
+        yield dat_out
 
 
 def check_filename_ensemble(filename):
