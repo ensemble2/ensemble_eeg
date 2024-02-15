@@ -1,9 +1,7 @@
 import glob
-from importlib import reload
 import brm_to_edf
 
-reload(brm_to_edf)
-
+# !!! change this to the location of the brm files you want to convert
 files = glob.glob(
     "/Users/bvelde3/_Research/EEG_Ensemble/WKZ/Data/*.brm"
 )  # Change this to where your BRM files are

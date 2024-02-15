@@ -1,10 +1,9 @@
 import glob
-import ensemble_edf
 import os
+import ensemble_edf
 
-# !!! change this to the location of the edf directory you want to change
-path2edffiles = "path/2/edf/files"
-
+# !!! change this to the location of the edf files you want to anonymize
+path2edffiles = "/Users/bvelde3/_Research/EEG_Ensemble/EDF_scripts/Data"
 files = glob.glob(os.path.join(path2edffiles, "*.edf"))
 
 for file in files:
