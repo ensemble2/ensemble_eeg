@@ -315,7 +315,7 @@ def prepare_edf_signal_header(data, device):
         ichan = channel_ids.index(data[i].ChannelTitle)
         if data[i].ChannelTitle == "Left":
             label = "F3"
-        else:
+        elif data[i].ChannelTitle == "Right":
             label = "F4"
 
         transducer_type = None
