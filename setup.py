@@ -5,9 +5,9 @@ import setuptools
 setuptools.setup(
     name="ensemble_edf",
     py_modules=["ensemble_edf", "brm_to_edf"],
-    python_requires=">3.10",
+    python_requires=">3.1",
     install_requires=["defusedxml", "numpy"],
-    version="0.1.1",
+    version="0.1.2",
     author="Bauke van der Velde",
     author_email="b.vandervelde-3@umcutrecht.nl",
 )

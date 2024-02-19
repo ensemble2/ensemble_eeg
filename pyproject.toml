@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ensemble_eeg"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
   { name="Bauke van der Velde", email="b.vandervelde-3@umcutrecht.nl" },
 ]
 description = "Package used to analyze preprocess edf files for the ENSEMBLE2 study"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.1"
 dependencies = [
     "numpy",
     "defusedxml",
