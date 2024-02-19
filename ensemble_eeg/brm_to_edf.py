@@ -3,12 +3,9 @@ import os
 import shutil
 import zipfile
 from collections import Counter, namedtuple
-from datetime import datetime, timezone
-
 import defusedxml.ElementTree as ET
 import numpy as np
-
-import src.ensemble_eeg.ensemble_eeg as ensemble_eeg
+import ensemble_eeg
 
 
 def convert_brm_to_edf(fd, is_fs_64hz=None):
