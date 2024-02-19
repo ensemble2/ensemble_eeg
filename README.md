@@ -136,6 +136,7 @@ for file in brm_files:
       brm_to_edf.convert_brm_to_edf(file) 
 ```
 
+For more scripts, please refer to the [demos](demos) folder
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgements
 - [edfrd](https://github.com/somnonetz/edfrd)
