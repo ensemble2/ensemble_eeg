@@ -363,24 +363,26 @@ def rename_for_ensemble(fd):
     if not filedir:
         filedir = os.getcwd()
 
+    filename = os.path.basename(fd)
+    do_renaming = check_filename_ensemble(filename)
+
+    if not (do_renaming):
+        print("File already uses ENSEMBLE standards, no renaming required")
+        return
+
     while True:
         print(f"changing name of {fd}")
-        filename = os.path.basename(fd)
 
-        # check whether filename needs to be changed
-        do_renaming = check_filename_ensemble(filename)
+        header = read_edf_header(fd)
 
-        if do_renaming:
-            header = read_edf_header(fd)
+        # get the new subject code
+        subject_code = get_subject_code()
 
-            # get the new subject code
-            subject_code = get_subject_code()
+        # check type of acquisition
+        acq = get_acquisition_type(header)
 
-            # check type of acquisition
-            acq = get_acquisition_type(header)
-
-            # check type of session
-            ses = get_session_type()
+        # check type of session
+        ses = get_session_type()
 
         split_new_filename = [subject_code, ses, acq, "run-1_eeg.edf"]
         new_filename = "_".join(split_new_filename)
