@@ -224,13 +224,14 @@ def get_numerical_data(file, device):
     """
     f = open(file.FileName, "rb")
 
-    match file.FileType:
-        case "FloatMappedToInt16" | "Int16":
-            data = np.fromfile(f, dtype=np.int16)
-        case "Float32":
-            data = np.fromfile(f, dtype=np.float32)
-        case _:
-            raise Exception(f"Unrecognized file format {file.FileType}")
+    if file.FileType == "FloatMappedToInt16":
+        data = np.fromfile(f, dtype=np.int16)
+    elif file.FileType == "Int16":
+        data = np.fromfile(f, dtype=np.int16)
+    elif file.FileType == "Float32":
+        data = np.fromfile(f, dtype=np.float32)
+    else:
+        raise Exception(f"Unrecognized file format {file.FileType}")
 
     return data
 
