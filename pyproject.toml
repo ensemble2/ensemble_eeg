@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ensemble_eeg"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
   { name="Bauke van der Velde", email="b.vandervelde-3@umcutrecht.nl" },
 ]
