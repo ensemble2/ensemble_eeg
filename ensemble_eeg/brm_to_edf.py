@@ -5,7 +5,7 @@ import zipfile
 from collections import Counter, namedtuple
 import defusedxml.ElementTree as ET
 import numpy as np
-import ensemble_eeg
+import ensemble_edf
 
 
 def convert_brm_to_edf(fd, is_fs_64hz=None):
@@ -81,11 +81,11 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
 
             hdr = prepare_edf_header(data)
             signal_header = prepare_edf_signal_header(data, device)
-            header = ensemble_eeg.Header(*hdr, signal_header)
+            header = ensemble_edf.Header(*hdr, signal_header)
 
             # write header to file
             print(f"\tprint header to {output_filename}")
-            ensemble_eeg.write_edf_header(output_filename, header)
+            ensemble_edf.write_edf_header(output_filename, header)
 
             # write data to file
             print(f"\tprint data records to {output_filename}")
@@ -267,7 +267,7 @@ def prepare_edf_header(data):
     start_time = "00.00.00"
 
     bytes_in_header = (
-        ensemble_eeg.HEADER_SIZE + n_channels * ensemble_eeg.SIGNAL_HEADER_SIZE
+        ensemble_edf.HEADER_SIZE + n_channels * ensemble_edf.SIGNAL_HEADER_SIZE
     )
     reserved = None
     fs = data[0].sampleHz
@@ -337,7 +337,7 @@ def prepare_edf_signal_header(data, device):
             nr_samples,
             reserved,
         ]
-        signal_headers[i] = ensemble_eeg.SignalHeader(*sig_header)
+        signal_headers[i] = ensemble_edf.SignalHeader(*sig_header)
 
     return tuple(signal_headers)
 
