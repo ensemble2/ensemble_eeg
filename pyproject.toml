@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ensemble_eeg"
-version = "0.1.3"
+version = "0.1.4"
 authors = [
   { name="Bauke van der Velde", email="b.vandervelde-3@umcutrecht.nl" },
 ]
@@ -20,6 +20,3 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",  
     "Operating System :: OS Independent",
 ]
-
-[tool.setuptools.packages.find]
-where = ["ensemble_eeg"]
