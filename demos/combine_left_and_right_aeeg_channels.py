@@ -1,4 +1,4 @@
-import ensemble_edf
+from ensemble_eeg import ensemble_edf
 
 # !!! change these variables to the paths to the left and right channels you
 # !!! want to combine

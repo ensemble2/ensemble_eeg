@@ -5,7 +5,7 @@ import zipfile
 from collections import Counter, namedtuple
 import defusedxml.ElementTree as ET
 import numpy as np
-import ensemble_edf
+from ensemble_eeg import ensemble_edf
 
 
 def convert_brm_to_edf(fd, is_fs_64hz=None):

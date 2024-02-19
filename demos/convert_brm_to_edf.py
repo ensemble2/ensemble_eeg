@@ -1,5 +1,5 @@
 import glob
-import brm_to_edf
+from ensemble_eeg import brm_to_edf
 
 # !!! change this to the location of the brm files you want to convert
 files = glob.glob("path/2/brm/files")
