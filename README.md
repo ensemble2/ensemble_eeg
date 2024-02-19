@@ -67,28 +67,28 @@ python -m pip install ensemble_eeg
 #### Anonymizing EDF-files
 ```python
 from ensemble_eeg import ensemble_edf
-ensemble_edf.anonymize_edf_header("path/2/your/edf/file") # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
+ensemble_edf.anonymize_edf_header("path/2/your/edf/file") # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ```
 #### Fixing EDF headers
 ```python
 from ensemble_eeg import ensemble_edf
-ensemble_edf.fix_edf_header("path/2/your/edf/file") # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
+ensemble_edf.fix_edf_header("path/2/your/edf/file") # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ```
 #### Combine left and right aEEG channels into one single file
 ```python
 from ensemble_eeg import ensemble_edf
-ensemble_edf.combine_aeeg_channels('path/2/your/left/channel', 'path/2/your/right/channel', 'new_filename') # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
+ensemble_edf.combine_aeeg_channels('path/2/your/left/channel', 'path/2/your/right/channel', 'new_filename') # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ```
 #### Rename EDF-files according to BIDS and ENSEMBLE standards
 ```python
 from ensemble_eeg import ensemble_edf
-ensemble_edf.rename_for_ensemble('path/2/your/edf/file') # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
+ensemble_edf.rename_for_ensemble('path/2/your/edf/file') # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ```
 ### Example scripts for specific situations
 ##### 1) File is already .edf, but you do not know whether header is EDF+, the file is not anonymized, and not renamed
 ```python
 from ensemble_eeg import ensemble_edf
-file = 'path/2/your/edf/file' # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
+file = 'path/2/your/edf/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ensemble_edf.fix_edf_header(file)       # for header check
 ensemble_edf.anonymize_edf_header(file) # for anonymization
 ensemble_edf.rename_for_ensemble(file)  # for renaming
@@ -98,7 +98,7 @@ ensemble_edf.rename_for_ensemble(file)  # for renaming
 ```python
 from ensemble_eeg import brm_to_edf
 from ensemble_eeg import ensemble_edf
-brm_file = 'path/2/your/brm/file' # for windows, type an r before the " to ensure the use of raw strings (r"path/2/your/brm/file") 
+brm_file = 'path/2/your/brm/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/brm/file") 
 brm_to_edf.convert_brm_to_edf(brm_file)     # for conversion, output edf is already anonymized
 edf_file = 'path/2/your/edf/file'           # check which file was made in previous step
 ensemble_edf.rename_for_ensemble(edf_file)  # for renaming
