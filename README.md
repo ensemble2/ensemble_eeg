@@ -91,6 +91,8 @@ from ensemble_eeg import ensemble_edf
 file = 'path/2/your/edf/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ensemble_edf.fix_edf_header(file)       # for header check
 ensemble_edf.anonymize_edf_header(file) # for anonymization
+
+anonymized_file = 'path/2/your/anonymized/edf/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
 ensemble_edf.rename_for_ensemble(file)  # for renaming
 
 ```
