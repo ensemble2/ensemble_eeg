@@ -14,7 +14,8 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
 
     Parameters:
         fd (str): The path to the BRM file.
-        is_fs_64hz (bool, optional): Indicates whether the sampling frequency is 64 Hz. Defaults to None.
+        is_fs_64hz (bool, optional): Indicates whether the sampling frequency
+            is 64 Hz. Defaults to None.
 
     Raises:
         ValueError: If the file is not found.
@@ -40,9 +41,6 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
         index = parse_xml(index_xml)
         device_xml = os.path.join(tmp_dir, "Device.xml")
         device = parse_xml(device_xml)
-
-        dat_files_left = []
-        dat_files_right = []
 
         if is_fs_64hz is None:
             is_fs_64hz = (
@@ -256,12 +254,6 @@ def prepare_edf_header(data):
     version = "0"
     PID = "X X X X"
     RID = "Startdate X X X X"
-    # start_date = datetime.strftime(
-    #     datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%d.%m.%y"
-    # )
-    # start_time = datetime.strftime(
-    #     datetime.fromtimestamp(int(data[0].StartTime), timezone.utc), format="%H.%M.%S"
-    # )
 
     start_date = "01.01.85"
     start_time = "00.00.00"
@@ -292,7 +284,8 @@ def prepare_edf_header(data):
 
 def prepare_edf_signal_header(data, device):
     """
-    Generate the signal headers for an EDF file based on the provided data and device.
+    Generate the signal headers for an EDF file based on the provided data
+        and device.
 
     Parameters:
         data (list): A list of data objects.

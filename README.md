@@ -96,7 +96,7 @@ anonymized_file = 'path/2/your/anonymized/edf/file' # for windows users, type an
 ensemble_edf.rename_for_ensemble(file)  # for renaming
 
 ```
-##### 2) File is .brm 
+##### 2) Your file is .brm and you want to convert it to .edf 
 ```python
 from ensemble_eeg import brm_to_edf
 from ensemble_eeg import ensemble_edf
@@ -106,7 +106,7 @@ edf_file = 'path/2/your/edf/file'           # check which file was made in previ
 ensemble_edf.rename_for_ensemble(edf_file)  # for renaming
 
 ```
-##### 3) Files are .edf, but left and right channel are seperate 
+##### 3) Your files are .edf, but left and right channels are seperate 
 ```python
 from ensemble_eeg import ensemble_edf
 left_file = 'path/2/your/left/edf/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
@@ -115,7 +115,7 @@ ensemble_edf.combine_aeeg_channels(left_file, right_file) # output is automatica
 ensemble_edf.rename_for_ensemble(file)                    # for renaming
 
 ```
-##### 4) Anonymize multiple .edf files in the same directory 
+##### 4) You want to anonymize multiple .edf files in the same directory 
 ```python
 from ensemble_eeg import ensemble_edf
 import glob
@@ -125,9 +125,11 @@ edf_files = glob.glob(os.path.join(edf_directory, "*.edf"))
 for file in edf_files:
       ensemble_edf.fix_edf_header(file) 
       ensemble_edf.anonymize_edf_header(file) 
-      ensemble_edf.rename_for_ensemble(file)                    
+      
+      anonymized_filename = Path(file).stem + "_ANONYMIZED" + Path(file).suffix
+      ensemble_edf.rename_for_ensemble(anonymized_filename)                    
 ```
-##### 5) Convert multiple .brm files in the same directory 
+##### 5) You want to convert multiple .brm files in the same directory 
 ```python
 from ensemble_eeg import brm_to_edf
 import glob
