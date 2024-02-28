@@ -10,24 +10,23 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 <!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">ENSEMBLE EEG</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
+- [ENSEMBLE EEG](#ensemble-eeg)
+  - [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+      - [Start python](#start-python)
+      - [Anonymizing EDF-files](#anonymizing-edf-files)
+      - [Fixing EDF headers](#fixing-edf-headers)
+      - [Combine left and right aEEG channels into one single file](#combine-left-and-right-aeeg-channels-into-one-single-file)
+      - [Rename EDF-files according to BIDS and ENSEMBLE standards](#rename-edf-files-according-to-bids-and-ensemble-standards)
+    - [Example scripts for specific situations](#example-scripts-for-specific-situations)
+        - [1) File is already .edf, but you do not know whether header is EDF+, the file is not anonymized, and not renamed](#1-file-is-already-edf-but-you-do-not-know-whether-header-is-edf-the-file-is-not-anonymized-and-not-renamed)
+        - [2) Your file is .brm and you want to convert it to .edf](#2-your-file-is-brm-and-you-want-to-convert-it-to-edf)
+        - [3) Your files are .edf, but left and right channels are seperate](#3-your-files-are-edf-but-left-and-right-channels-are-seperate)
+        - [4) You want to anonymize multiple .edf files in the same directory](#4-you-want-to-anonymize-multiple-edf-files-in-the-same-directory)
+        - [5) You want to convert multiple .brm files in the same directory](#5-you-want-to-convert-multiple-brm-files-in-the-same-directory)
+  - [Acknowledgements](#acknowledgements)
 
 <!-- ABOUT THE PROJECT -->
 # ENSEMBLE EEG
