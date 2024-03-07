@@ -144,3 +144,5 @@ For more scripts, please refer to the [demos](demos) folder
 ## Acknowledgements
 - [edfrd](https://github.com/somnonetz/edfrd)
 - [Install-Python-Instructions](https://github.com/PackeTsar/Install-Python/tree/master)
+
+Software development has been funded by [La Fondation Paralysie Cérébrale](https://www.fondationparalysiecerebrale.org/) under grant [ENSEMBLE](https://www.fondationparalysiecerebrale.org/ensemble-european-newborn-study-early-markers-better-life).
