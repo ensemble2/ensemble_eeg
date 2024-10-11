@@ -588,13 +588,13 @@ def get_session_type():
     """
     while 1:
         ses_string = (
-            "During which session was this recordig taken? " + "[(d)iag/(t)erm]: "
+            "During which session was this recordig taken? " + "[(d)iag/(f)ollowup]: "
         )
         ses = input(ses_string).lower()
         if ses == "d" or ses == "diag":
             ses = "ses-diag"
             break
-        elif ses == "t" or ses == "term":
+        elif ses == "f" or ses == "followup":
             ses = "ses-term"
             break
 
