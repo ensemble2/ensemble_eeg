@@ -514,9 +514,9 @@ def check_filename_ensemble(filename):
     ):
         do_renaming = False
         warnings.warn(
-            "The filename already seems to adhere to the ensemble " "and BIDS standard "
+            "The filename already seems to adhere to the ensemble and BIDS standard "
         )
-        continue_renaming = input("Are you sure you want to rename this file? " "[y/N]")
+        continue_renaming = input("Are you sure you want to rename this file? [y/N]")
         do_renaming = continue_renaming.lower() == "y"
 
     return do_renaming

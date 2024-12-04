@@ -46,7 +46,7 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
 
         if is_fs_64hz is None:
             is_fs_64hz = (
-                input("is the sampling " "frequency 64 Hz? [y/N]: ").lower() == "y"
+                input("is the sampling frequency 64 Hz? [y/N]: ").lower() == "y"
             )
 
         if is_fs_64hz:
