@@ -61,8 +61,8 @@ SIGNAL_HEADER = (
 )
 
 INT_SIZE = 2
-HEADER_SIZE = sum([size for _, size, _ in HEADER])
-SIGNAL_HEADER_SIZE = sum([size for _, size, _ in SIGNAL_HEADER])
+HEADER_SIZE = sum(size for _, size, _ in HEADER)
+SIGNAL_HEADER_SIZE = sum(size for _, size, _ in SIGNAL_HEADER)
 
 Header = namedtuple("Header", [name for name, _, _ in HEADER] + ["signals"])
 SignalHeader = namedtuple("SignalHeader", [name for name, _, _ in SIGNAL_HEADER])
@@ -131,7 +131,7 @@ def read_edf_data(fd, header, chans="all"):
             chans = list(range(header.number_of_signals))
 
         data_record_length = sum(
-            [signal.nr_of_samples_in_each_data_record for signal in header.signals]
+            signal.nr_of_samples_in_each_data_record for signal in header.signals
         )
 
         if opened:
