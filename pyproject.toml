@@ -20,3 +20,28 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",  
     "Operating System :: OS Independent",
 ]
+
+[tool.ruff.lint]
+extend-select = [
+    "UP",
+    "I",
+    "B",
+    "C4",
+    "PIE",
+    "PYI",
+    "SIM",
+    "PGH",
+    "FLY",
+    "PERF",
+    "FURB",
+    "RUF",
+]
+ignore = [
+    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+    "B007",
+	"B028",
+	"B905",
+	"PYI024",
+	"SIM115",
+	"RUF005",
+]
