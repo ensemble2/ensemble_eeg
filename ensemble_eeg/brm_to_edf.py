@@ -138,7 +138,7 @@ def parse_xml(xml):
         for name, vals in tag_dict:
             if vals == 1:
                 parsed_xml.append(root[counter].text)
-                counter = counter + 1
+                counter += 1
             else:
                 parsed_child = []
                 child_elems = root.findall(name)
@@ -147,7 +147,7 @@ def parse_xml(xml):
                     child_elem_vals = [el.text for el in child_elem]
                     tup = namedtuple(child_elem.tag, child_elem_tags)
                     parsed_child.append(tup(*child_elem_vals))
-                    counter = counter + 1
+                    counter += 1
                 parsed_xml.append(parsed_child)
 
     else:
@@ -179,7 +179,7 @@ def extract_brm_file(index, device, dat_files):
         file = file._replace(FileName=dat_file)
         print(f"\textracting {df} datastream")
         data[counter] = get_brm_data(file, device)
-        counter = counter + 1
+        counter += 1
 
     return data
 
