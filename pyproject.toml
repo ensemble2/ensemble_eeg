@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Package used to analyze preprocess edf files for the ENSEMBLE2 study"
 readme = "README.md"
-requires-python = ">=3.1"
+requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "defusedxml",
