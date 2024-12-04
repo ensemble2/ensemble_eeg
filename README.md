@@ -23,21 +23,21 @@
     - [Example scripts for specific situations](#example-scripts-for-specific-situations)
         - [1) File is already .edf, but you do not know whether header is EDF+, the file is not anonymized, and not renamed](#1-file-is-already-edf-but-you-do-not-know-whether-header-is-edf-the-file-is-not-anonymized-and-not-renamed)
         - [2) Your file is .brm and you want to convert it to .edf](#2-your-file-is-brm-and-you-want-to-convert-it-to-edf)
-        - [3) Your files are .edf, but left and right channels are seperate](#3-your-files-are-edf-but-left-and-right-channels-are-seperate)
+        - [3) Your files are .edf, but left and right channels are separate](#3-your-files-are-edf-but-left-and-right-channels-are-separate)
         - [4) You want to anonymize multiple .edf files in the same directory](#4-you-want-to-anonymize-multiple-edf-files-in-the-same-directory)
         - [5) You want to convert multiple .brm files in the same directory](#5-you-want-to-convert-multiple-brm-files-in-the-same-directory)
   - [Acknowledgements](#acknowledgements)
 
 <!-- ABOUT THE PROJECT -->
 # ENSEMBLE EEG
-Ensemble EEG is a library of EEG analyis tools for the ENSEMBLE study. As of
-today it is focuses on 5 seperate things:
+Ensemble EEG is a library of EEG analysis tools for the ENSEMBLE study. As of
+today it is focuses on 5 separate things:
 
 - **Anonymizing** EDF files in accordance with the ENSEMBLE study and the
   requirements of [EDF+](https://www.edfplus.info/specs/edfplus.html)
 - **Fixing** EDF headers to adhere to the [EDF+](https://www.edfplus.info/specs/edfplus.html) standard
 - **Converting** BRM to [EDF+](https://www.edfplus.info/specs/edfplus.html) files
-- **Combining** seperate aEEG channels into one [EDF+](https://www.edfplus.info/specs/edfplus.html) file
+- **Combining** separate aEEG channels into one [EDF+](https://www.edfplus.info/specs/edfplus.html) file
 - **Renaming** EEG files according to ENSEMBLE and [BIDS](https://bids-specification.readthedocs.io/en/stable/) standards
 
 <!-- GETTING STARTED -->
@@ -105,7 +105,7 @@ edf_file = 'path/2/your/edf/file'           # check which file was made in previ
 ensemble_edf.rename_for_ensemble(edf_file)  # for renaming
 
 ```
-##### 3) Your files are .edf, but left and right channels are seperate 
+##### 3) Your files are .edf, but left and right channels are separate 
 ```python
 from ensemble_eeg import ensemble_edf
 left_file = 'path/2/your/left/edf/file' # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file") 
