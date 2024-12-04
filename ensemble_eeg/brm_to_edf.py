@@ -3,8 +3,10 @@ import os
 import shutil
 import zipfile
 from collections import Counter, namedtuple
+
 import defusedxml.ElementTree as ET
 import numpy as np
+
 from ensemble_eeg import ensemble_edf
 
 

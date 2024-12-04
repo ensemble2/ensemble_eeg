@@ -1,6 +1,7 @@
 import glob
 import os
 from pathlib import Path
+
 from ensemble_eeg import ensemble_edf
 
 # !!! change this to the location of the edf files you want to anonymize

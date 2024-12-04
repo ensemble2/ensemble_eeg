@@ -1,4 +1,5 @@
 import glob
+
 from ensemble_eeg import brm_to_edf
 
 # !!! change this to the location of the brm files you want to convert
