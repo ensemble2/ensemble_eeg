@@ -145,16 +145,12 @@ def read_edf_data(fd, header, chans="all"):
             a = np.fromfile(fd, count=data_record_length, dtype=np.int16)
 
             offset = 0
-            chan_nr = 0
             data_record = []
-            for signal in header.signals:
+            for chan_nr, signal in enumerate(header.signals):
+                new_offset = offset + signal.nr_of_samples_in_each_data_record
                 if chan_nr in chans:
-                    data_record.append(
-                        a[offset : offset + signal.nr_of_samples_in_each_data_record]
-                    )
-
-                offset += signal.nr_of_samples_in_each_data_record
-                chan_nr += 1
+                    data_record.append(a[offset : new_offset])
+                offset = new_offset
 
             yield data_record
 
@@ -485,13 +481,9 @@ def append_channels(data_left, data_right):
     """
     This function takes two lists of data and appends the corresponding elements from the second list to the elements in the first list. It yields the appended elements.
     """
-    counter = 0
-    for _ in range(len(data_left)):
-        dat_out = data_left[counter]
-        dat_out.extend(data_right[counter])
-        counter += 1
-
-        yield dat_out
+    for elements_left, elements_right in zip(data_left, data_right):
+        elements_left.extend(elements_right)
+        yield elements_left
 
 
 def check_filename_ensemble(filename):
