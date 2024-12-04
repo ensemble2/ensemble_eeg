@@ -70,7 +70,7 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
 
         assert n_data_files_left == n_data_files_right
 
-        for i in range(0, n_data_files_left):
+        for i in range(n_data_files_left):
             both_dat_files = [dat_files_left[i], dat_files_right[i]]
             data = extract_brm_file(index, device, both_dat_files)
 
@@ -304,7 +304,7 @@ def prepare_edf_signal_header(data, device):
         units = units.replace("µ", "u")
 
     signal_headers = [[] for _ in data]
-    for i in range(0, len(data)):
+    for i in range(len(data)):
         ichan = channel_ids.index(data[i].ChannelTitle)
         if data[i].ChannelTitle == "Left":
             label = "F3"
@@ -358,7 +358,7 @@ def write_brm_data_to_edf(filename, data):
         fd = open(filename, "ab")
 
         index = 0
-        for i_record in range(0, n_records):
+        for i_record in range(n_records):
             fd.write(dat1[index : (index + fs)])
             fd.write(dat2[index : (index + fs)])
             index = (i_record + 1) * fs
