@@ -448,7 +448,7 @@ def combine_aeeg_channels(fd_left, fd_right, new_filename="two_channel_aeeg"):
 
     # create new signal headers
     signal_headers_left = [hdr_left.signals[0]]
-    signal_headers_right = [signal for signal in hdr_right.signals]
+    signal_headers_right = list(hdr_right.signals)
     signal_headers = signal_headers_left + signal_headers_right
     header[-1] = len(signal_headers)
     header.append(
