@@ -18,7 +18,7 @@ def _int(f, size, name):
     try:
         return int(s)
     except ValueError:
-        warnings.warn("{name}: Could not parse integer {s}.".format(name=name, s=s))
+        warnings.warn(f"{name}: Could not parse integer {s}.")
 
 
 def _float(f, size, name):
@@ -26,7 +26,7 @@ def _float(f, size, name):
     try:
         return float(s)
     except ValueError:
-        warnings.warn("{name}: Could not parse float {s}.".format(name=name, s=s))
+        warnings.warn(f"{name}: Could not parse float {s}.")
 
 
 def _discard(f, size, _):
@@ -189,7 +189,10 @@ def write_edf_header(fd, header):
                 if (
                     name == "startdate_of_recording" or name == "starttime_of_recording"
                 ) and not isinstance(val, str):
-                    val = "{:02d}.{:02d}.{:02d}".format(val[0], val[1], val[2] % 100)
+                    h = val[0]
+                    m = val[1]
+                    s = val[2] % 100
+                    val = f"{h:02d}.{m:02d}.{s:02d}"
                 val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
 
             assert len(val) == size
