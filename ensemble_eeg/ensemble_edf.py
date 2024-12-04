@@ -183,7 +183,7 @@ def write_edf_header(fd, header):
 
             if not isinstance(val, bytes):
                 if (
-                    name == "startdate_of_recording" or name == "starttime_of_recording"
+                    name in {"startdate_of_recording", "starttime_of_recording"}
                 ) and not isinstance(val, str):
                     h = val[0]
                     m = val[1]
@@ -587,10 +587,10 @@ def get_session_type():
             "During which session was this recordig taken? " + "[(d)iag/(f)ollowup]: "
         )
         ses = input(ses_string).lower()
-        if ses == "d" or ses == "diag":
+        if ses in {"d", "diag"}:
             ses = "ses-diag"
             break
-        elif ses == "f" or ses == "followup":
+        elif ses in {"f", "followup"}:
             ses = "ses-term"
             break
 

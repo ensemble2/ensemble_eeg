@@ -221,7 +221,7 @@ def get_numerical_data(file, device):
     """
     f = open(file.FileName, "rb")
 
-    if file.FileType == "FloatMappedToInt16" or file.FileType == "Int16":
+    if file.FileType in {"FloatMappedToInt16", "Int16"}:
         data = np.fromfile(f, dtype=np.int16)
     elif file.FileType == "Float32":
         data = np.fromfile(f, dtype=np.float32)
