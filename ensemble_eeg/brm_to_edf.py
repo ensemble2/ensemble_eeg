@@ -170,16 +170,14 @@ def extract_brm_file(index, device, dat_files):
     """
     filenames = [fd.FileName for fd in index.FileDescription]
 
-    counter = 0
     data = [[] for _ in dat_files]
 
-    for dat_file in dat_files:
+    for i, dat_file in enumerate(dat_files):
         df = os.path.basename(dat_file)
         file = index.FileDescription[filenames.index(df)]
         file = file._replace(FileName=dat_file)
         print(f"\textracting {df} datastream")
-        data[counter] = get_brm_data(file, device)
-        counter += 1
+        data[i] = get_brm_data(file, device)
 
     return data
 
