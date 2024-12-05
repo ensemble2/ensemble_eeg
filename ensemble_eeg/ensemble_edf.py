@@ -149,7 +149,7 @@ def read_edf_data(fd, header, chans="all"):
             for chan_nr, signal in enumerate(header.signals):
                 new_offset = offset + signal.nr_of_samples_in_each_data_record
                 if chan_nr in chans:
-                    data_record.append(a[offset : new_offset])
+                    data_record.append(a[offset:new_offset])
                 offset = new_offset
 
             yield data_record
