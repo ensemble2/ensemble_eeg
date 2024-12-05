@@ -197,8 +197,12 @@ def get_brm_data(file, device):
 
     Data = namedtuple("data", list(file._fields) + ["sampleHz", "data"])
     data = list(file)
-    data.append(int(DAUSampleHz / int(file.SamplePeriod512thSeconds)))
-    data.append(get_numerical_data(file, device))
+    data.extend(
+        (
+            int(DAUSampleHz / int(file.SamplePeriod512thSeconds)),
+            get_numerical_data(file, device),
+        )
+    )
 
     return Data(*data)
 
