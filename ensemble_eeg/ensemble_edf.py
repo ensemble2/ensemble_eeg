@@ -177,7 +177,7 @@ def write_edf_header(fd, header):
         fd = open(fd, "wb")
         opened = True
 
-        for val, (name, size, _) in zip(header, HEADER):
+        for val, (name, size, _) in zip(header, HEADER, strict=True):
             if val is None:
                 val = b"\x20" * size
 
@@ -194,7 +194,7 @@ def write_edf_header(fd, header):
             assert len(val) == size
             fd.write(val)
 
-        for vals, (name, size, _) in zip(zip(*header.signals), SIGNAL_HEADER):
+        for vals, (_, size, _) in zip(zip(*header.signals), SIGNAL_HEADER):  # noqa: B905
             for val in vals:
                 if val is None:
                     val = b"\x20" * size
@@ -481,7 +481,7 @@ def append_channels(data_left, data_right):
     """
     This function takes two lists of data and appends the corresponding elements from the second list to the elements in the first list. It yields the appended elements.
     """
-    for elements_left, elements_right in zip(data_left, data_right):
+    for elements_left, elements_right in zip(data_left, data_right, strict=True):
         elements_left.extend(elements_right)
         yield elements_left
 
