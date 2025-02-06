@@ -3,7 +3,7 @@ import shutil
 import warnings
 from collections import namedtuple
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numpy as np
 
@@ -310,7 +310,6 @@ def get_patient_age(header):
     # get the info
     for header_info, val in zip(HEADER, header):
         field_name = header_info[0]
-        print(field_name, val)
         if field_name == "local_patient_identification":
             lpi = val.split(' ')
             birthdate = lpi[2]
@@ -365,19 +364,27 @@ def anonymize_edf_header(fd):
     folder = os.path.dirname(fd)
     split_filename = filename.split("_")
     is_ensemble_approved = (
-        split_filename[0] == "subj"
-        and len(split_filename[1]) == 10
-        and ("E" in split_filename[1])
+        split_filename[0][:4] == "sub-"
+        and len(split_filename[0][4:]) == 10
+        and ("E" in split_filename[0])
     )
 
-    anonymized_rid = "Startdate X X X X"
+    # define anonymized versions of the header fields
     if is_ensemble_approved:
-        pseudo_code = split_filename[1]
-        anonymized_pid = pseudo_code + " X X X"
+        pseudo_code = split_filename[0][4:]
+        anonymized_pid = pseudo_code + " X 01-JAN-1985 X"
     else:
-        anonymized_pid = "X X X X"
+        anonymized_pid = "X X 01-JAN-1985 X"
+    
+    # define the startdate as 01/01/1985 + the patient age
+    age_in_days = get_patient_age(header)
+    startdate = datetime.strptime('01-01-1985', '%d-%m-%Y') + timedelta(age_in_days)
 
-    anonymized_startdate = "01.01.85"
+    startdate_str = startdate.strftime('%d-%b-%Y').upper()
+    anonymized_rid = f"Startdate {startdate_str} X X X"
+
+    startdate_str = startdate.strftime('%d.%m.%y')
+    anonymized_startdate = startdate_str
     anonymized_starttime = "00.00.00"
 
     header = header._replace(
@@ -640,9 +647,3 @@ def get_session_type():
             break
 
     return ses
-
-
-if __name__ == '__main__':
-    edf_path = "/neurospin/tmp/ag271121/ensemnle_eeg/sub-104E124331_ses-diag_acq-ceeg_run-1_eeg.edf"
-    header = read_edf_header(edf_path)
-    print(get_patient_age(header))
