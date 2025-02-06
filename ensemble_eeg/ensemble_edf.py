@@ -2,7 +2,6 @@ import os
 import shutil
 import warnings
 from collections import namedtuple
-
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -300,40 +299,42 @@ def fix_edf_header(fd):
 
 
 def get_patient_age(header):
-    """ Get the age of the patient in days from the header of the edf file.
-    
+    """Get the age of the patient in days from the header of the edf file.
+
     Parameters
     ----------
     header: Header
         The EDF header object containing information about the data.
     """
     # get the info
-    for header_info, val in zip(HEADER, header):
+    for header_info, val in zip(HEADER, header, strict=False):
         field_name = header_info[0]
         if field_name == "local_patient_identification":
-            lpi = val.split(' ')
+            lpi = val.split(" ")
             birthdate = lpi[2]
         elif field_name == "local_recording_identification":
-            lri = val.split(' ')
+            lri = val.split(" ")
             recdate = lri[1]
         elif field_name == "startdate_of_recording":
             startdate = val
-    
+
     # parse the dates
     try:
-        birthdate = datetime.strptime(birthdate, '%d-%b-%Y')
+        birthdate = datetime.strptime(birthdate, "%d-%b-%Y")
     except:
         raise ValueError(f"Wrong formatting of birthdate: {birthdate}")
     try:
-        recdate = datetime.strptime(recdate, '%d-%b-%Y')
+        recdate = datetime.strptime(recdate, "%d-%b-%Y")
     except:
         raise ValueError(f"Wrong formatting of recday: {recdate}")
     try:
-        startdate = datetime.strptime(startdate, '%d.%m.%y')
+        startdate = datetime.strptime(startdate, "%d.%m.%y")
     except:
         raise ValueError(f"Wrong formatting of startdate: {startdate}")
     # check consistency
-    assert recdate == startdate, f"These values should be equal (?): {recdate} ; {startdate}"
+    assert recdate == startdate, (
+        f"These values should be equal (?): {recdate} ; {startdate}"
+    )
 
     # compute the age in days
     age_in_days = (recdate - birthdate).days
@@ -375,15 +376,15 @@ def anonymize_edf_header(fd):
         anonymized_pid = pseudo_code + " X 01-JAN-1985 X"
     else:
         anonymized_pid = "X X 01-JAN-1985 X"
-    
+
     # define the startdate as 01/01/1985 + the patient age
     age_in_days = get_patient_age(header)
-    startdate = datetime.strptime('01-01-1985', '%d-%m-%Y') + timedelta(age_in_days)
+    startdate = datetime.strptime("01-01-1985", "%d-%m-%Y") + timedelta(age_in_days)
 
-    startdate_str = startdate.strftime('%d-%b-%Y').upper()
+    startdate_str = startdate.strftime("%d-%b-%Y").upper()
     anonymized_rid = f"Startdate {startdate_str} X X X"
 
-    startdate_str = startdate.strftime('%d.%m.%y')
+    startdate_str = startdate.strftime("%d.%m.%y")
     anonymized_startdate = startdate_str
     anonymized_starttime = "00.00.00"
 
