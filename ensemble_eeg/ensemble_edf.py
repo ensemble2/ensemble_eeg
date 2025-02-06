@@ -3,6 +3,8 @@ import shutil
 import warnings
 from collections import namedtuple
 
+from datetime import datetime
+
 import numpy as np
 
 
@@ -121,8 +123,8 @@ def read_edf_data(fd, header, chans="all"):
     """
     opened = False
     if isinstance(fd, str):
-        opened = True
         fd = open(fd, "rb")
+        opened = True
 
         start = 0
         end = header.number_of_data_records
@@ -295,6 +297,49 @@ def fix_edf_header(fd):
         os.replace(tmp_fd, fd)
 
     print("done")
+
+
+def get_patient_age(header):
+    """ Get the age of the patient in days from the header of the edf file.
+    
+    Parameters
+    ----------
+    header: Header
+        The EDF header object containing information about the data.
+    """
+    # get the info
+    for header_info, val in zip(HEADER, header):
+        field_name = header_info[0]
+        print(field_name, val)
+        if field_name == "local_patient_identification":
+            lpi = val.split(' ')
+            birthdate = lpi[2]
+        elif field_name == "local_recording_identification":
+            lri = val.split(' ')
+            recdate = lri[1]
+        elif field_name == "startdate_of_recording":
+            startdate = val
+    
+    # parse the dates
+    try:
+        birthdate = datetime.strptime(birthdate, '%d-%b-%Y')
+    except:
+        raise ValueError(f"Wrong formatting of birthdate: {birthdate}")
+    try:
+        recdate = datetime.strptime(recdate, '%d-%b-%Y')
+    except:
+        raise ValueError(f"Wrong formatting of recday: {recdate}")
+    try:
+        startdate = datetime.strptime(startdate, '%d.%m.%y')
+    except:
+        raise ValueError(f"Wrong formatting of startdate: {startdate}")
+    # check consistency
+    assert recdate == startdate, f"These values should be equal (?): {recdate} ; {startdate}"
+
+    # compute the age in days
+    age_in_days = (recdate - birthdate).days
+
+    return age_in_days
 
 
 def anonymize_edf_header(fd):
@@ -595,3 +640,9 @@ def get_session_type():
             break
 
     return ses
+
+
+if __name__ == '__main__':
+    edf_path = "/neurospin/tmp/ag271121/ensemnle_eeg/sub-104E124331_ses-diag_acq-ceeg_run-1_eeg.edf"
+    header = read_edf_header(edf_path)
+    print(get_patient_age(header))
