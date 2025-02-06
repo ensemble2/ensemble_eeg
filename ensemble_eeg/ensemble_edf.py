@@ -2,6 +2,7 @@ import os
 import shutil
 import warnings
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 import numpy as np
 
@@ -121,8 +122,8 @@ def read_edf_data(fd, header, chans="all"):
     """
     opened = False
     if isinstance(fd, str):
-        opened = True
         fd = open(fd, "rb")
+        opened = True
 
         start = 0
         end = header.number_of_data_records
@@ -297,6 +298,50 @@ def fix_edf_header(fd):
     print("done")
 
 
+def get_patient_age(header):
+    """Get the age of the patient in days from the header of the edf file.
+
+    Parameters
+    ----------
+    header: Header
+        The EDF header object containing information about the data.
+    """
+    # get the info
+    for header_info, val in zip(HEADER, header, strict=False):
+        field_name = header_info[0]
+        if field_name == "local_patient_identification":
+            lpi = val.split(" ")
+            birthdate = lpi[2]
+        elif field_name == "local_recording_identification":
+            lri = val.split(" ")
+            recdate = lri[1]
+        elif field_name == "startdate_of_recording":
+            startdate = val
+
+    # parse the dates
+    try:
+        birthdate = datetime.strptime(birthdate, "%d-%b-%Y")
+    except:
+        raise ValueError(f"Wrong formatting of birthdate: {birthdate}")
+    try:
+        recdate = datetime.strptime(recdate, "%d-%b-%Y")
+    except:
+        raise ValueError(f"Wrong formatting of recday: {recdate}")
+    try:
+        startdate = datetime.strptime(startdate, "%d.%m.%y")
+    except:
+        raise ValueError(f"Wrong formatting of startdate: {startdate}")
+    # check consistency
+    assert recdate == startdate, (
+        f"These values should be equal (?): {recdate} ; {startdate}"
+    )
+
+    # compute the age in days
+    age_in_days = (recdate - birthdate).days
+
+    return age_in_days
+
+
 def anonymize_edf_header(fd):
     """Function to anonymize edf files according to ENSEMBLE and BIDS standards.
     The output file will be appended with ANONYMIZED in the filename. Please
@@ -320,19 +365,27 @@ def anonymize_edf_header(fd):
     folder = os.path.dirname(fd)
     split_filename = filename.split("_")
     is_ensemble_approved = (
-        split_filename[0] == "subj"
-        and len(split_filename[1]) == 10
-        and ("E" in split_filename[1])
+        split_filename[0][:4] == "sub-"
+        and len(split_filename[0][4:]) == 10
+        and ("E" in split_filename[0])
     )
 
-    anonymized_rid = "Startdate X X X X"
+    # define anonymized versions of the header fields
     if is_ensemble_approved:
-        pseudo_code = split_filename[1]
-        anonymized_pid = pseudo_code + " X X X"
+        pseudo_code = split_filename[0][4:]
+        anonymized_pid = pseudo_code + " X 01-JAN-1985 X"
     else:
-        anonymized_pid = "X X X X"
+        anonymized_pid = "X X 01-JAN-1985 X"
 
-    anonymized_startdate = "01.01.85"
+    # define the startdate as 01/01/1985 + the patient age
+    age_in_days = get_patient_age(header)
+    startdate = datetime.strptime("01-01-1985", "%d-%m-%Y") + timedelta(age_in_days)
+
+    startdate_str = startdate.strftime("%d-%b-%Y").upper()
+    anonymized_rid = f"Startdate {startdate_str} X X X"
+
+    startdate_str = startdate.strftime("%d.%m.%y")
+    anonymized_startdate = startdate_str
     anonymized_starttime = "00.00.00"
 
     header = header._replace(
