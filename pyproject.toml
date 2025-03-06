@@ -25,6 +25,9 @@ classifiers = [
 [project.urls]
 Repository = "https://github.com/ensemble2/ensemble_eeg"
 
+[tool.setuptools]
+packages = ["ensemble_eeg"]
+
 [tool.ruff.lint]
 extend-select = [
     "UP",
