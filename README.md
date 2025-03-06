@@ -139,7 +139,8 @@ for file in brm_files:
       brm_to_edf.convert_brm_to_edf(file)
 ```
 
-For more scripts, please refer to the [demos](demos) folder
+For more scripts, please refer to the [demos](https://github.com/ensemble2/ensemble_eeg/tree/main/demos) folder
+
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgements
 - [edfrd](https://github.com/somnonetz/edfrd)
