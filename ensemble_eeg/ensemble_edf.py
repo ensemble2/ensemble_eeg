@@ -408,13 +408,13 @@ def anonymize_edf_header(fd):
 
     startdate_str = startdate.strftime("%d.%m.%y")
     anonymized_startdate = startdate_str
-    anonymized_starttime = "00.00.00"
+    # anonymized_starttime = "00.00.00"
 
     header = header._replace(
         local_patient_identification=anonymized_pid,
         local_recording_identification=anonymized_rid,
         startdate_of_recording=anonymized_startdate,
-        starttime_of_recording=anonymized_starttime,
+        # starttime_of_recording=anonymized_starttime,
     )
 
     fd_out = os.path.join(folder, filename + "_ANONYMIZED" + ext)
