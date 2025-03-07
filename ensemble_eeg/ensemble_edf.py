@@ -71,18 +71,18 @@ Header = namedtuple("Header", [name for name, _, _ in HEADER] + ["signals"])
 SignalHeader = namedtuple("SignalHeader", [name for name, _, _ in SIGNAL_HEADER])
 
 MONTH_DICT = {
-    "01": "JAN",
-    "02": "FEB",
-    "03": "MAR",
-    "04": "APR",
-    "05": "MAY",
-    "06": "JUN",
-    "07": "JUL",
-    "08": "AUG",
-    "09": "SEP",
-    "10": "OCT",
-    "11": "NOV",
-    "12": "DEC",
+    1: "JAN",
+    2: "FEB",
+    3: "MAR",
+    4: "APR",
+    5: "MAY",
+    6: "JUN",
+    7: "JUL",
+    8: "AUG",
+    9: "SEP",
+    10: "OCT",
+    11: "NOV",
+    12: "DEC",
 }
 
 
@@ -343,7 +343,7 @@ def get_patient_age(header):
     try:
         recdate = dateparser.parse(recdate, date_formats=["%d-%b-%Y"])
     except ValueError as err:
-        raise ValueError(f"Wrong formatting of recday: {recdate}") from err
+        raise ValueError(f"Wrong formatting of recording startdate: {recdate}") from err
     try:
         startdate = dateparser.parse(startdate, date_formats=["%d.%m.%y"])
     except ValueError as err:
@@ -396,14 +396,10 @@ def anonymize_edf_header(fd):
 
     # define the startdate as 01/01/1985 + the patient age
     age_in_days = get_patient_age(header)
-    startdate = datetime.strptime("01-01-1985", "%d-%m-%Y") + timedelta(age_in_days)
+    startdate = datetime(1985, 1, 1) + timedelta(age_in_days)
 
     # use MONTH DICT to bypass local language month abreviations
-    startdate_str = startdate.strftime("%d-%m-%Y")
-    month = re.search(r"-(0|1)\d-", startdate_str)[0]
-    month_nb = month[1:-1]
-    month_abr = MONTH_DICT[month_nb]
-    startdate_str = startdate_str.replace(month, f"-{month_abr}-")
+    startdate_str = f"{startdate.date().day:0>2}-{MONTH_DICT[startdate.date().month]}-{startdate.date().year:0>4}"
     anonymized_rid = f"Startdate {startdate_str} X X X"
 
     startdate_str = startdate.strftime("%d.%m.%y")
