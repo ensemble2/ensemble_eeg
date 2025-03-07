@@ -195,7 +195,7 @@ def write_edf_header(fd, header):
         fd = open(fd, "wb")
         opened = True
 
-        for val, (name, size, _) in zip(header, HEADER, strict=True):
+        for val, (name, size, _) in zip(header, HEADER, strict=False):
             if val is None:
                 val = b"\x20" * size
 
