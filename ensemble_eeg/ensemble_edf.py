@@ -3,6 +3,8 @@ import shutil
 import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
+import dateparser
+import re
 
 import numpy as np
 
@@ -67,6 +69,21 @@ SIGNAL_HEADER_SIZE = sum(size for _, size, _ in SIGNAL_HEADER)
 
 Header = namedtuple("Header", [name for name, _, _ in HEADER] + ["signals"])
 SignalHeader = namedtuple("SignalHeader", [name for name, _, _ in SIGNAL_HEADER])
+
+MONTH_DICT = {
+    "01": 'JAN',
+    "02": 'FEB',
+    "03": 'MAR',
+    "04": 'APR',
+    "05": 'MAY',
+    "06": 'JUN',
+    "07": 'JUL',
+    "08": 'AUG',
+    "09": 'SEP',
+    "10": 'OCT',
+    "11": 'NOV',
+    "12": 'DEC',
+}
 
 
 def read_edf_header(fd):
@@ -320,15 +337,15 @@ def get_patient_age(header):
 
     # parse the dates
     try:
-        birthdate = datetime.strptime(birthdate, "%d-%b-%Y")
+        birthdate = dateparser.parse(birthdate, date_formats=['%d-%b-%Y'])
     except:
         raise ValueError(f"Wrong formatting of birthdate: {birthdate}")
     try:
-        recdate = datetime.strptime(recdate, "%d-%b-%Y")
+        recdate = dateparser.parse(recdate, date_formats=['%d-%b-%Y'])
     except:
         raise ValueError(f"Wrong formatting of recday: {recdate}")
     try:
-        startdate = datetime.strptime(startdate, "%d.%m.%y")
+        startdate = dateparser.parse(startdate, date_formats=['%d.%m.%y'])
     except:
         raise ValueError(f"Wrong formatting of startdate: {startdate}")
     # check consistency
@@ -381,7 +398,12 @@ def anonymize_edf_header(fd):
     age_in_days = get_patient_age(header)
     startdate = datetime.strptime("01-01-1985", "%d-%m-%Y") + timedelta(age_in_days)
 
-    startdate_str = startdate.strftime("%d-%b-%Y").upper()
+    # use MONTH DICT to bypass local language month abreviations
+    startdate_str = startdate.strftime('%d-%m-%Y')
+    month = re.search(r'-(0|1)\d-', startdate_str)[0]
+    month_nb = month[1:-1]
+    month_abr = MONTH_DICT[month_nb]
+    startdate_str = startdate_str.replace(month, f'-{month_abr}-')
     anonymized_rid = f"Startdate {startdate_str} X X X"
 
     startdate_str = startdate.strftime("%d.%m.%y")
