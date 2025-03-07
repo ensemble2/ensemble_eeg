@@ -1,5 +1,4 @@
 import os
-import re
 import shutil
 import warnings
 from collections import namedtuple
