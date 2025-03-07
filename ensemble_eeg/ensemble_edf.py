@@ -1,11 +1,11 @@
 import os
+import re
 import shutil
 import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
-import dateparser
-import re
 
+import dateparser
 import numpy as np
 
 
@@ -71,18 +71,18 @@ Header = namedtuple("Header", [name for name, _, _ in HEADER] + ["signals"])
 SignalHeader = namedtuple("SignalHeader", [name for name, _, _ in SIGNAL_HEADER])
 
 MONTH_DICT = {
-    "01": 'JAN',
-    "02": 'FEB',
-    "03": 'MAR',
-    "04": 'APR',
-    "05": 'MAY',
-    "06": 'JUN',
-    "07": 'JUL',
-    "08": 'AUG',
-    "09": 'SEP',
-    "10": 'OCT',
-    "11": 'NOV',
-    "12": 'DEC',
+    "01": "JAN",
+    "02": "FEB",
+    "03": "MAR",
+    "04": "APR",
+    "05": "MAY",
+    "06": "JUN",
+    "07": "JUL",
+    "08": "AUG",
+    "09": "SEP",
+    "10": "OCT",
+    "11": "NOV",
+    "12": "DEC",
 }
 
 
@@ -399,11 +399,11 @@ def anonymize_edf_header(fd):
     startdate = datetime.strptime("01-01-1985", "%d-%m-%Y") + timedelta(age_in_days)
 
     # use MONTH DICT to bypass local language month abreviations
-    startdate_str = startdate.strftime('%d-%m-%Y')
-    month = re.search(r'-(0|1)\d-', startdate_str)[0]
+    startdate_str = startdate.strftime("%d-%m-%Y")
+    month = re.search(r"-(0|1)\d-", startdate_str)[0]
     month_nb = month[1:-1]
     month_abr = MONTH_DICT[month_nb]
-    startdate_str = startdate_str.replace(month, f'-{month_abr}-')
+    startdate_str = startdate_str.replace(month, f"-{month_abr}-")
     anonymized_rid = f"Startdate {startdate_str} X X X"
 
     startdate_str = startdate.strftime("%d.%m.%y")
