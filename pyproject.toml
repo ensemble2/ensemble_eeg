@@ -27,6 +27,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.scripts]
+ensemble_eeg_deidentify = "ensemble_eeg:__main__:main"
+
 [project.urls]
 Repository = "https://github.com/ensemble2/ensemble_eeg"
 
