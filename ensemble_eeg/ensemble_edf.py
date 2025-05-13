@@ -218,19 +218,27 @@ def write_edf_header(fd, header):
 
                 if not isinstance(val, bytes):
                     val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
-                
+
                 if len(val) > size:
                     try:
                         # convert float to scientific expression
                         val = float(val)
                         if val >= 0:
-                            val = f'{val:.2e}'.encode(encoding="ascii").ljust(size, b"\x20")
+                            val = f"{val:.2e}".encode(encoding="ascii").ljust(
+                                size, b"\x20"
+                            )
                         else:
-                            val = f'{val:.1e}'.encode(encoding="ascii").ljust(size, b"\x20")
+                            val = f"{val:.1e}".encode(encoding="ascii").ljust(
+                                size, b"\x20"
+                            )
                     except:
-                        raise AssertionError(f"{val} too long! Need to be shorter than {size} bytes.")
+                        raise AssertionError(
+                            f"{val} too long! Need to be shorter than {size} bytes."
+                        )
 
-                assert len(val) == size, f"{val} too long! Need to be shorter than {size} bytes."
+                assert len(val) == size, (
+                    f"{val} too long! Need to be shorter than {size} bytes."
+                )
                 fd.write(val)
 
     if opened:
