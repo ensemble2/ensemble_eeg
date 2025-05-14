@@ -196,7 +196,7 @@ def write_edf_header(fd, header):
 
         for val, (name, size, _) in zip(header, HEADER, strict=False):
             if val is None:
-                val = b"\x20" * size
+                val = b" " * size
 
             if not isinstance(val, bytes):
                 if (
@@ -206,7 +206,7 @@ def write_edf_header(fd, header):
                     m = val[1]
                     s = val[2] % 100
                     val = f"{h:02d}.{m:02d}.{s:02d}"
-                val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
+                val = str(val).encode(encoding="ascii").ljust(size, b" ")
 
             assert len(val) == size
             fd.write(val)
@@ -214,10 +214,10 @@ def write_edf_header(fd, header):
         for vals, (_, size, _) in zip(zip(*header.signals), SIGNAL_HEADER):  # noqa: B905
             for val in vals:
                 if val is None:
-                    val = b"\x20" * size
+                    val = b" " * size
 
                 if not isinstance(val, bytes):
-                    val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
+                    val = bytes(val, encoding="ascii").ljust(size, b" ")
 
                 if len(val) > size:
                     try:
