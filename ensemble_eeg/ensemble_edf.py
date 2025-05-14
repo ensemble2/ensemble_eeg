@@ -227,7 +227,9 @@ def write_edf_header(fd, header):
                             precision = 2
                         else:
                             precision = 1
-                        val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(size, b" ")
+                        val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(
+                            size, b" "
+                        )
                     except:
                         raise AssertionError(
                             f"{val} too long! Need to be shorter than {size} bytes."
