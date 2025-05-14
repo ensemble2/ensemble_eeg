@@ -206,7 +206,7 @@ def write_edf_header(fd, header):
                     m = val[1]
                     s = val[2] % 100
                     val = f"{h:02d}.{m:02d}.{s:02d}"
-                val = str(val).encode(encoding="ascii").ljust(size, b" ")
+                val = bytes(val, encoding="ascii").ljust(size, b" ")
 
             assert len(val) == size
             fd.write(val)
