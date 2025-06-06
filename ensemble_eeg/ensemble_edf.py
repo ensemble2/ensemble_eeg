@@ -196,7 +196,7 @@ def write_edf_header(fd, header):
 
         for val, (name, size, _) in zip(header, HEADER, strict=False):
             if val is None:
-                val = b"\x20" * size
+                val = b" " * size
 
             if not isinstance(val, bytes):
                 if (
@@ -206,7 +206,7 @@ def write_edf_header(fd, header):
                     m = val[1]
                     s = val[2] % 100
                     val = f"{h:02d}.{m:02d}.{s:02d}"
-                val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
+                val = bytes(val, encoding="ascii").ljust(size, b" ")
 
             assert len(val) == size
             fd.write(val)
@@ -214,12 +214,30 @@ def write_edf_header(fd, header):
         for vals, (_, size, _) in zip(zip(*header.signals), SIGNAL_HEADER):  # noqa: B905
             for val in vals:
                 if val is None:
-                    val = b"\x20" * size
+                    val = b" " * size
 
                 if not isinstance(val, bytes):
-                    val = str(val).encode(encoding="ascii").ljust(size, b"\x20")
+                    val = bytes(val, encoding="ascii").ljust(size, b" ")
 
-                assert len(val) == size
+                if len(val) > size:
+                    try:
+                        val = float(val)
+                    except ValueError as e:
+                        raise AssertionError(
+                            f"{val} too long! Need to be shorter than {size} bytes."
+                        ) from e
+                    # convert float to scientific expression
+                    if val >= 0:
+                        precision = 2
+                    else:
+                        precision = 1
+                    val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(
+                        size, b" "
+                    )
+
+                assert len(val) == size, (
+                    f"{val} too long! Need to be shorter than {size} bytes."
+                )
                 fd.write(val)
 
     if opened:
