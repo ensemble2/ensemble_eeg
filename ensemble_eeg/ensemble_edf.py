@@ -221,19 +221,19 @@ def write_edf_header(fd, header):
 
                 if len(val) > size:
                     try:
-                        # convert float to scientific expression
                         val = float(val)
-                        if val >= 0:
-                            precision = 2
-                        else:
-                            precision = 1
-                        val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(
-                            size, b" "
-                        )
-                    except:
+                    except ValueError as e:
                         raise AssertionError(
                             f"{val} too long! Need to be shorter than {size} bytes."
-                        )
+                        ) from e
+                    # convert float to scientific expression
+                    if val >= 0:
+                        precision = 2
+                    else:
+                        precision = 1
+                    val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(
+                        size, b" "
+                    )
 
                 assert len(val) == size, (
                     f"{val} too long! Need to be shorter than {size} bytes."
