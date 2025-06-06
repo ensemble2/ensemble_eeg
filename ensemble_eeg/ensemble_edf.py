@@ -227,10 +227,7 @@ def write_edf_header(fd, header):
                             f"{val} too long! Need to be shorter than {size} bytes."
                         ) from e
                     # convert float to scientific expression
-                    if val >= 0:
-                        precision = 2
-                    else:
-                        precision = 1
+                    precision = 2 if val >= 0 else 1
                     val = bytes(f"{val:.{precision}e}", encoding="ascii").ljust(
                         size, b" "
                     )
