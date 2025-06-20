@@ -411,7 +411,7 @@ def anonymize_edf_header(fd):
     age_in_days = get_patient_age(header)
     startdate = datetime(1985, 1, 1) + timedelta(age_in_days)
 
-    # use MONTH DICT to bypass local language month abreviations
+    # use MONTH DICT to bypass local language month abbreviations
     startdate_str = f"{startdate.date().day:0>2}-{MONTH_DICT[startdate.date().month]}-{startdate.date().year:0>4}"
     anonymized_rid = f"Startdate {startdate_str} X X X"
 
