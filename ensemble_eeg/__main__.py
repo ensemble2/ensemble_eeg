@@ -63,5 +63,9 @@ def anonymize_eeg_ensemble(input_dir, output_dir):
         shutil.move(eeg_anon_path, eeg_output_path)
 
 
-if __name__ == "__main__":
+def _anonymize_eeg_ensemble_main():
     fire.Fire(anonymize_eeg_ensemble)
+
+
+if __name__ == "__main__":
+    _anonymize_eeg_ensemble_main()

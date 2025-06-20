@@ -27,6 +27,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.scripts]
+anonymize_eeg_ensemble = "ensemble_eeg:_anonymize_eeg_ensemble_main"
+
 [project.urls]
 Repository = "https://github.com/ensemble2/ensemble_eeg"
 
