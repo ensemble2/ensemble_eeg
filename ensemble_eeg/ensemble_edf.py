@@ -3,6 +3,7 @@ import shutil
 import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
+from itertools import starmap
 
 import dateparser
 import numpy as np
@@ -112,9 +113,7 @@ def read_edf_header(fd):
         for signal_header in signal_headers:
             signal_header.append(func(fd, size, name))
 
-    header.append(
-        tuple(SignalHeader(*signal_header) for signal_header in signal_headers)
-    )
+    header.append(tuple(starmap(SignalHeader, signal_headers)))
 
     if opened:
         fd.close()
@@ -532,9 +531,7 @@ def combine_aeeg_channels(fd_left, fd_right, new_filename="two_channel_aeeg"):
     signal_headers_right = list(hdr_right.signals)
     signal_headers = signal_headers_left + signal_headers_right
     header[-1] = len(signal_headers)
-    header.append(
-        tuple(SignalHeader(*signal_header) for signal_header in signal_headers)
-    )
+    header.append(tuple(starmap(SignalHeader, signal_headers)))
 
     # calculate new header length
     header_length = HEADER_SIZE + len(signal_headers) * SIGNAL_HEADER_SIZE
