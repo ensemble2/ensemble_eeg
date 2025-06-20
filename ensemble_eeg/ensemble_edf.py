@@ -375,7 +375,7 @@ def get_patient_age(header):
 def anonymize_edf_header(fd):
     """
     Anonymizes an EDF file's header fields according to ENSEMBLE and BIDS standards and writes the result to a new file with '_ANONYMIZED' appended to the filename.
-    
+
     The function replaces patient and recording identifiers with anonymized values and recalculates the recording start date based on a fixed reference date plus the patient's age. The original data is preserved, but all identifying information in the header is removed or replaced to ensure privacy.
     """
     if not (os.path.isfile(fd)):
