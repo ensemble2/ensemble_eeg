@@ -52,9 +52,10 @@ extend-select = [
     "RUF",
 ]
 ignore = [
-    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
 	"B028",
+    "DTZ001",
 	"PYI024",
 	"SIM115",
 	"RUF005",
+    "TRY002",
 ]
