@@ -21,9 +21,10 @@ maintainers = [
 ]
 description = "Package used to analyze preprocess EDF files for the ENSEMBLE study"
 readme = "README.md"
+license = "GPL-3.0"
 license-files = [ "LICENSE", "NOTICE" ]
 classifiers = [
-    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
 
