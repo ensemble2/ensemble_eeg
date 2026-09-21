@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=77.0.3", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core>=3.12"]
+build-backend = "flit_core.buildapi"
 
 [project]
 name = "ensemble_eeg"
@@ -33,9 +33,6 @@ anonymize_eeg_ensemble = "ensemble_eeg:_anonymize_eeg_ensemble_main"
 
 [project.urls]
 Repository = "https://github.com/ensemble2/ensemble_eeg"
-
-[tool.setuptools]
-packages = ["ensemble_eeg"]
 
 [tool.ruff.lint]
 extend-select = [
