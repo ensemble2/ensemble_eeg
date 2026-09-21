@@ -401,7 +401,7 @@ def anonymize_edf_header(fd):
     # define anonymized versions of the header fields
     if is_ensemble_approved:
         pseudo_code = split_filename[0][4:]
-        anonymized_pid = pseudo_code + " X 01-JAN-1985 X"
+        anonymized_pid = f"{pseudo_code} X 01-JAN-1985 X"
     else:
         anonymized_pid = "X X 01-JAN-1985 X"
 
@@ -424,7 +424,7 @@ def anonymize_edf_header(fd):
         # starttime_of_recording=anonymized_starttime,
     )
 
-    fd_out = os.path.join(folder, filename + "_ANONYMIZED" + ext)
+    fd_out = os.path.join(folder, f"{filename}_ANONYMIZED{ext}")
     write_edf_header(fd_out, header)
     write_edf_data(fd_out, data)
 
@@ -510,7 +510,7 @@ def combine_aeeg_channels(fd_left, fd_right, new_filename="two_channel_aeeg"):
     print(f"Combining {filename_left} and {filename_right} ... ", end="", flush=True)
 
     output_dir = os.path.dirname(fd_left)
-    path_to_file = os.path.join(output_dir, new_filename + ".edf")
+    path_to_file = os.path.join(output_dir, f"{new_filename}.edf")
 
     hdr_left = read_edf_header(fd_left)
     hdr_right = read_edf_header(fd_right)
@@ -623,7 +623,7 @@ def get_subject_code():
             continue
         break
 
-    subject_code = "sub-" + centre_code + "E" + subject_number + sibling_number
+    subject_code = f"sub-{centre_code}E{subject_number}{sibling_number}"
 
     return subject_code
 
@@ -664,7 +664,7 @@ def get_session_type():
     """
     while 1:
         ses_string = (
-            "During which session was this recordig taken? " + "[(d)iag/(f)ollowup]: "
+            "During which session was this recordig taken? [(d)iag/(f)ollowup]: "
         )
         ses = input(ses_string).lower()
         if ses in {"d", "diag"}:

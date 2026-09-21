@@ -75,9 +75,9 @@ def convert_brm_to_edf(fd, is_fs_64hz=None):
             data = extract_brm_file(index, device, both_dat_files)
 
             if i == 0:
-                output_filename = os.path.splitext(fd)[0] + ".edf"
+                output_filename = f"{os.path.splitext(fd)[0]}.edf"
             else:
-                output_filename = os.path.splitext(fd)[0] + "_" + str(i) + ".edf"
+                output_filename = f"{os.path.splitext(fd)[0]}_{i}.edf"
 
             hdr = prepare_edf_header(data)
             signal_header = prepare_edf_signal_header(data, device)
