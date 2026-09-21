@@ -662,7 +662,7 @@ def get_session_type():
     """
     Helper code to get session type with user input
     """
-    while 1:
+    while True:
         ses_string = (
             "During which session was this recordig taken? [(d)iag/(f)ollowup]: "
         )
