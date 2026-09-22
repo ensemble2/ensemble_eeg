@@ -671,7 +671,7 @@ def get_session_type():
             ses = "ses-diag"
             break
         elif ses in {"f", "followup"}:
-            ses = "ses-term"
+            ses = "ses-followup"
             break
 
     return ses
