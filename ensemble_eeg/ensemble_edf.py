@@ -205,7 +205,7 @@ def write_edf_header(fd, header):
                     m = val[1]
                     s = val[2] % 100
                     val = f"{h:02d}.{m:02d}.{s:02d}"
-                val = bytes(val, encoding="ascii").ljust(size, b" ")
+                val = bytes(str(val), encoding="ascii").ljust(size, b" ")
 
             assert len(val) == size
             fd.write(val)
@@ -216,7 +216,7 @@ def write_edf_header(fd, header):
                     val = b" " * size
 
                 if not isinstance(val, bytes):
-                    val = bytes(val, encoding="ascii").ljust(size, b" ")
+                    val = bytes(str(val), encoding="ascii").ljust(size, b" ")
 
                 if len(val) > size:
                     try:
