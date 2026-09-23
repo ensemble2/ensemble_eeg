@@ -4,6 +4,7 @@ import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
 from itertools import starmap
+from pathlib import Path
 
 import dateparser
 import numpy as np
@@ -466,7 +467,10 @@ def rename_for_ensemble(fd):
         # check type of session
         ses = get_session_type()
 
-        split_new_filename = [subject_code, ses, acq, "run-1_eeg.edf"]
+        # check number of runs
+        run = get_run_number(fd)
+
+        split_new_filename = [subject_code, ses, acq, run, "eeg.edf"]
         new_filename = "_".join(split_new_filename)
 
         print(f"new filename is {new_filename}")
@@ -571,7 +575,7 @@ def check_filename_ensemble(filename):
     Helper function to check filename and compare to the ENSEMBLE standard
 
      Args:
-        fd (str): (Relative) path to file to rename.
+        filename (str): (Relative) path to file to rename.
 
     """
     split_filename = filename.split("_")
@@ -675,3 +679,25 @@ def get_session_type():
             break
 
     return ses
+
+def get_run_number(fd):
+    """
+    Helper code to get run number with user input
+
+    Args:
+        fd(str): (Relative) path to file to rename.
+    """
+    run_number = 0
+    multiple_runs = input("Are there multiple runs for this session? [y/N]: ").lower()
+    if multiple_runs == "y":
+        filename = Path(fd).stem
+        split_filename = filename.split("_")
+        run_string = split_filename[-1]
+        if "-" in run_string:
+            run_number = int(run_string.split("-")[-1])
+        else:
+            run_number = int(run_string)
+
+    run = f"run-{run_number}"
+
+    return run
