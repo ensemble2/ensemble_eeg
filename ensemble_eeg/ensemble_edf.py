@@ -578,7 +578,7 @@ def check_filename_ensemble(filename):
     do_renaming = True
 
     if (
-        (split_filename[0] == "subj")
+        (split_filename[0] == "sub")
         and ("ses" in split_filename[2])
         and ("acq" in split_filename[3])
         and ("run" in split_filename[4])
