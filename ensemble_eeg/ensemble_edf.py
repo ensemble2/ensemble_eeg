@@ -687,16 +687,22 @@ def get_run_number(fd):
     Args:
         fd(str): (Relative) path to file to rename.
     """
-    run_number = 0
+    run_number = 1  # Default run number
     multiple_runs = input("Are there multiple runs for this session? [y/N]: ").lower()
     if multiple_runs == "y":
-        filename = Path(fd).stem
-        split_filename = filename.split("_")
-        run_string = split_filename[-1]
-        if "-" in run_string:
-            run_number = int(run_string.split("-")[-1])
+        file_parent = Path(fd).parent
+        run_files = sorted([p for p in file_parent.iterdir() if p.is_file() and p.suffix == ".edf"])
+        print(f"{len(run_files)} available runs")
+
+        if Path(fd) in run_files:
+            run_index = run_files.index(Path(fd))
+            run_number = run_index + 1  # Increment by 1 to start run numbers from 1
+            print(f"Using run: {run_files[run_index].name} (run-{run_number})")
         else:
-            run_number = int(run_string)
+            print(f"Warning: {fd} not found in the list of run files. Defaulting to run-1.")
+            run_number = 1
+    else:
+        run_number = 1
 
     run = f"run-{run_number}"
 
