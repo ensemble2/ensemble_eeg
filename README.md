@@ -186,6 +186,41 @@ brm_files = glob.glob(os.path.join(brm_directory, "*.brm"))
 for file in brm_files:
     brm_to_edf.convert_brm_to_edf(file)
 ```
+##### 6) You want to anonymize and rename all segment-files from 1 EEG in the same folder
+If you have a folder with multiple segments of the same EEG inside, the following script can be used to automatically anomynize and rename all files at once. 
+
+BEWARE! all the input information needed to rename the files (see above) should be the same for all files in the directory. Files from different session can not be present in the same folder. 
+
+NOTE: the files need to be sequentially named, so when sorted in the folder, the order is equal to the order of recording. 
+
+NOTE: Before using this script, test 1 file in the folder to determine what the input to the questions should be
+
+``` python
+from ensemble_eeg import ensemble_edf
+import builtins
+from itertools import cycle
+
+answers = cycle(["<centre code: xxx>", 
+"<subject ID: xxxxx>", 
+"<sibling number: x>", 
+"<automatically determined cEEG/aEEG correct?: [Y/n]>", 
+"<diagnostic or followup: [d/f]>", 
+"<which followup session?: [1/2]>", #Delete this line if it is a diagnostic EEG
+"<multiple segments/runs: [Y/n]>", 
+"<is the file name correct?: [y/n]>"])  
+#example diagnostic EEG: answers = cycle(["101", "00001", "1", "y", "d", "y", "y"])
+#examplefollowup EEG: answers = cycle(["101", "00001", "1", "y", "f", "1", "y", "y"])
+
+
+original_input = builtins.input
+builtins.input = lambda prompt: next(answers)
+
+try:
+    for edf_file in edf_files:
+        rename_for_ensemble(edf_file)
+finally:
+    builtins.input = original_input  # Restore the original input function
+```
 
 For more scripts, please refer to the [demos](https://github.com/ensemble2/ensemble_eeg/tree/main/demos) folder
 
