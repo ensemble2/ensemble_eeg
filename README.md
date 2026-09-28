@@ -88,6 +88,19 @@ ensemble_edf.combine_aeeg_channels(
 )  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
 ```
 #### Rename EDF-files according to BIDS and ENSEMBLE standards
+
+To rename the EDF-files according to the ENSEMBLE standards, the following information is needed:
+
+1) Centre code (3-digits)
+2) Subject number (5-digits)
+3) Sibling number (1-digit)
+4) Whether the file is an aEEG or cEEG
+5) Whether the file is a diagnostic EEG or a follow-up EEG
+6) If it is a follow-up EEG; is it the first or second follow-up EEG?
+7) Is the EEG divided in multiple segment-files/multiple runs?
+
+The code below can be used to rename 1 EDF-file. To do multiple at once, see the scripts below. 
+
 ```python
 from ensemble_eeg import ensemble_edf
 
@@ -97,15 +110,30 @@ ensemble_edf.rename_for_ensemble(
 ```
 ### Example scripts for specific situations
 ##### 1) File is already .edf, but you do not know whether header is EDF+, the file is not anonymized, and not renamed
+
+This script does the following steps:
+1) check if your EDF-file has an EDF+ header. If not, the header is fixed to EDF+ convention (the original file is edited)
+2) The EDF-file is anomynized; a new file is created (the original file remains untouched)
+3) the anomynized EDF-file is renamed for ENSEMBLE an put in a BIDS format; a new patient folder is created and the renamed EDF-file is stored under this folder. (the original anomynized EDF-file remains untouched)
+
 ```python
 from ensemble_eeg import ensemble_edf
+import os
 
 file = "path/2/your/edf/file"  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
 ensemble_edf.fix_edf_header(file)  # for header check
 ensemble_edf.anonymize_edf_header(file)  # for anonymization
 
-anonymized_file = "path/2/your/anonymized/edf/file"  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
-ensemble_edf.rename_for_ensemble(file)  # for renaming
+filename = os.path.splitext(os.path.basename(file))[0]
+extension = os.path.splitext(file)[1]
+folder = os.path.dirname(file)
+
+anonymized_file = os.path.join(
+    folder,
+    filename + "_ANONYMIZED" + extension
+)
+print(f"Path of anonymized file: {anonymized_file}")
+ensemble_edf.rename_for_ensemble(anonymized_file)  # for renaming
 ```
 ##### 2) Your file is .brm and you want to convert it to .edf
 ```python
