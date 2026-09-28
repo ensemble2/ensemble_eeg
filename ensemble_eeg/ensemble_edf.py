@@ -467,6 +467,11 @@ def rename_for_ensemble(fd):
         # check type of session
         ses = get_session_type()
 
+        # check followup number if applicable
+        if ses == "ses-followup":
+            followup_number = get_followup_number()
+            ses = f"{ses}-{followup_number}"
+
         # check number of runs
         run = get_run_number(fd)
 
@@ -681,6 +686,20 @@ def get_session_type():
     return ses
 
 
+def get_followup_number():
+    """
+    Helper code to get followup number with user input
+    """
+    while True:
+        followup_number = input("Which follow-up number is this? [x]: ")
+        if len(followup_number) != 1 or not followup_number.isdigit():
+            print("Follow-up number must consist of a single digit")
+            continue
+        break
+
+    return f"followup-{followup_number}"
+
+
 def get_run_number(fd):
     """
     Helper code to get run number with user input
@@ -708,25 +727,3 @@ def get_run_number(fd):
     run = f"run-{run_number}"
 
     return run
-
-#edf_directory = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen"
-#edf_files = sorted([os.path.join(edf_directory, f) for f in os.listdir(edf_directory) if f.endswith('.edf')])[0]
-
-#rename_for_ensemble(edf_files)
-
-edf_directory = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen"
-edf_files = sorted([os.path.join(edf_directory, f) for f in os.listdir(edf_directory) if f.endswith('.edf')])
-
-import builtins
-from itertools import cycle
-
-answers = cycle(["101", "00001", "1", "y", "d", "y", "y"])  # Predefined answers for testing
-
-original_input = builtins.input
-builtins.input = lambda prompt: next(answers)
-
-try:
-    for edf_file in edf_files:
-        rename_for_ensemble(edf_file)
-finally:
-    builtins.input = original_input  # Restore the original input function
