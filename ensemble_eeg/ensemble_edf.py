@@ -680,6 +680,7 @@ def get_session_type():
 
     return ses
 
+
 def get_run_number(fd):
     """
     Helper code to get run number with user input
@@ -707,3 +708,8 @@ def get_run_number(fd):
     run = f"run-{run_number}"
 
     return run
+
+edf_directory = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen"
+edf_files = sorted([os.path.join(edf_directory, f) for f in os.listdir(edf_directory) if f.endswith('.edf')])[0]
+
+rename_for_ensemble(edf_files)
