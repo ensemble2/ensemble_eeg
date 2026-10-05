@@ -97,9 +97,9 @@ To rename the EDF-files according to the ENSEMBLE standards, the following infor
 4) Whether the file is an aEEG or cEEG
 5) Whether the file is a diagnostic EEG or a follow-up EEG
 6) If it is a follow-up EEG; is it the first or second follow-up EEG?
-7) Is the EEG divided in multiple segment-files/multiple runs?
+7) If the EEG is divided in multiple EDF-files/multiple runs. If so, the number of the run
 
-The code below can be used to rename 1 EDF-file. To do multiple at once, see the scripts below. 
+The following code can be used to rename 1 EDF-file. To do multiple at once, see the scripts below. Make sure the EDF-file is anonymized before renaming it. 
 
 ```python
 from ensemble_eeg import ensemble_edf
@@ -109,12 +109,12 @@ ensemble_edf.rename_for_ensemble(
 )  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
 ```
 ### Example scripts for specific situations
-##### 1) File is already .edf, but you do not know whether header is EDF+, the file is not anonymized, and not renamed
+##### 1) File is already .edf but you do not know whether the header is EDF+, the file is not anonymized, and not renamed
 
 This script does the following steps:
-1) check if your EDF-file has an EDF+ header. If not, the header is fixed to EDF+ convention (the original file is edited)
+1) check if your EDF-file has an correct EDF+ header. If not, the header is fixed to EDF+ convention (the original file is edited)
 2) The EDF-file is anomynized; a new file is created (the original file remains untouched)
-3) the anomynized EDF-file is renamed for ENSEMBLE an put in a BIDS format; a new patient folder is created and the renamed EDF-file is stored under this folder. (the original anomynized EDF-file remains untouched)
+3) the anomynized EDF-file is renamed for ENSEMBLE an put in a BIDS format; a patient folder is created and the renamed EDF-file is stored under this folder. (the original anomynized EDF-file remains untouched)
 
 ```python
 from ensemble_eeg import ensemble_edf
@@ -144,6 +144,7 @@ brm_file = "path/2/your/brm/file"  # for windows users, type an r before the " t
 brm_to_edf.convert_brm_to_edf(
     brm_file
 )  # for conversion, output edf is already anonymized
+
 edf_file = "path/2/your/edf/file"  # check which file was made in previous step
 ensemble_edf.rename_for_ensemble(edf_file)  # for renaming
 ```
@@ -159,6 +160,9 @@ ensemble_edf.combine_aeeg_channels(
 ensemble_edf.rename_for_ensemble(file)  # for renaming
 ```
 ##### 4) You want to anonymize and rename multiple .edf files in the same directory
+
+
+
 ```python
 from ensemble_eeg import ensemble_edf
 import glob
@@ -187,39 +191,60 @@ for file in brm_files:
     brm_to_edf.convert_brm_to_edf(file)
 ```
 ##### 6) You want to anonymize and rename all segment-files from 1 EEG in the same folder
-If you have a folder with multiple segments of the same EEG inside, the following script can be used to automatically anomynize and rename all files at once. 
+If you have a folder with multiple segments of the same EEG, the following script can be used to automatically anomynize and rename all files at once. 
 
-BEWARE! all the input information needed to rename the files (see above) should be the same for all files in the directory. Files from different session can not be present in the same folder. 
+BEWARE! all the input information needed to rename the files (see above) should be the same for all EDF-files in the directory. Files from different session can not be present in the same folder. 
 
-NOTE: the files need to be sequentially named, so when sorted in the folder, the order is equal to the order of recording. 
+NOTE: the files need to be sequentially named in the folder, so when sorted, the order is equal to the order of recording. 
 
-NOTE: Before using this script, test 1 file in the folder to determine what the input to the questions should be
+NOTE: Before using this script, test 1 file in the folder to determine what the input to the questions should be (example script 1)
 
 ``` python
 from ensemble_eeg import ensemble_edf
 import builtins
-from itertools import cycle
+from pathlib import Path
 
-answers = cycle(["<centre code: xxx>", 
-"<subject ID: xxxxx>", 
-"<sibling number: x>", 
-"<automatically determined cEEG/aEEG correct?: [Y/n]>", 
-"<diagnostic or followup: [d/f]>", 
-"<which followup session?: [1/2]>", #Delete this line if it is a diagnostic EEG
-"<multiple segments/runs: [Y/n]>", 
-"<is the file name correct?: [y/n]>"])  
-#example diagnostic EEG: answers = cycle(["101", "00001", "1", "y", "d", "y", "y"])
-#examplefollowup EEG: answers = cycle(["101", "00001", "1", "y", "f", "1", "y", "y"])
+edf_folder = Path("/path/2/folder/with/EDF/segment/files")
 
+
+original_edf_files = sorted(edf_folder.glob("*.edf")) #sort segment EDF-files
+print(f"Found {len(original_edf_files)} EDF files in {edf_folder}")
+
+for edf_file in original_edf_files:
+    anonymize_edf_header(str(edf_file))
+
+anonymized_files = sorted(edf_folder.glob("*_ANONYMIZED.edf")) #sort anonymized segment EDF-files
+print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
 
 original_input = builtins.input
-builtins.input = lambda prompt: next(answers)
 
 try:
-    for edf_file in edf_files:
-        rename_for_ensemble(edf_file)
+    for run_number, edf_file in enumerate(anonymized_files, start=1):
+
+        print("\n===================================")
+        print(f"PROCESSING FILE {run_number}")
+        print(f"FILE: {edf_file}")
+        print("===================================")
+
+        #change these answers for your specific file!
+        answers = iter([
+            "101",              # centre code
+            "00001",            # subject ID
+            "1",                # sibling number
+            "aEEG",             # Aquisition type aEEG or cEEG?
+            "f",                # diagnostic or followup?
+            "1",                # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
+            "y",                # multiple segments/runs?
+            str(run_number),    # DO NOT CHANGE
+            "y",                # is the file name correct?            
+        ])
+
+
+        builtins.input = lambda prompt, answers = answers: next(answers)
+        rename_for_ensemble(str(edf_file))
+
 finally:
-    builtins.input = original_input  # Restore the original input function
+    builtins.input = original_input
 ```
 
 For more scripts, please refer to the [demos](https://github.com/ensemble2/ensemble_eeg/tree/main/demos) folder
