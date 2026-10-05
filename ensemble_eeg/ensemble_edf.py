@@ -727,3 +727,29 @@ def get_run_number(fd):
     run = f"run-{run_number}"
 
     return run
+
+edf_directory = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen"
+edf_files = sorted([os.path.join(edf_directory, f) for f in os.listdir(edf_directory) if f.endswith('.edf')])
+
+import builtins
+from itertools import cycle
+
+answers = cycle(["101", 
+"00001", 
+"1", 
+"n", 
+"d", 
+"y", 
+"y"])  
+#example diagnostic EEG: answers = cycle(["101", "00001", "1", "y", "d", "y", "y"])
+#examplefollowup EEG: answers = cycle(["101", "00001", "1", "y", "f", "1", "y", "y"])
+
+
+original_input = builtins.input
+builtins.input = lambda prompt: next(answers)
+
+try:
+    for edf_file in edf_files:
+        rename_for_ensemble(edf_file)
+finally:
+    builtins.input = original_input  # Restore the original input function
