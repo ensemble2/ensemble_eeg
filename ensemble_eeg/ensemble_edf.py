@@ -639,30 +639,18 @@ def get_subject_code():
 
 def get_acquisition_type(header):
     """
-    Helper code to get acquisition type with user input or header information.
-
-    Args:
-        header: The header information of the file.
+    Helper code to get acquisition type with user input .
 
     Returns:
         acq: The determined acquisition type.
     """
-    # Check number of signals in file
-    if header.number_of_signals <= 4:
-        acq = "acq-aeeg"
-        print("file automatically determined to be aEEG")
-        correct_acq = input("is this correct? [Y/n]: ").lower()
-
-        if correct_acq == "n":
-            acq = "acq-ceeg"
-
-    else:
+    acq_input = input("Please input the acquisition type [(c)EEG/(a)EEG]: ").lower()
+    if acq_input in {"ceeg", "c"}:
         acq = "acq-ceeg"
-        print("file automatically determined to be cEEG")
-        correct_acq = input("is this correct? [Y/n]: ").lower()
-
-        if correct_acq == "n":
-            acq = "acq-aeeg"
+    elif acq_input in {"aeeg", "a"}:
+        acq = "acq-aeeg"
+    else:
+        raise ValueError("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG.")
 
     return acq
 
@@ -708,48 +696,12 @@ def get_run_number(fd):
         fd(str): (Relative) path to file to rename.
     """
     run_number = 1  # Default run number
-    multiple_runs = input("Are there multiple runs for this session? [y/N]: ").lower()
+    multiple_runs = input("Are there multiple EDF-files/runs for this session? [y/N]: ").lower()
     if multiple_runs == "y":
-        file_parent = Path(fd).parent
-        run_files = sorted([p for p in file_parent.iterdir() if p.is_file() and p.suffix == ".edf"])
-        print(f"{len(run_files)} available runs")
-
-        if Path(fd) in run_files:
-            run_index = run_files.index(Path(fd))
-            run_number = run_index + 1  # Increment by 1 to start run numbers from 1
-            print(f"Using run: {run_files[run_index].name} (run-{run_number})")
-        else:
-            print(f"Warning: {fd} not found in the list of run files. Defaulting to run-1.")
-            run_number = 1
+        run_number = input("Which run number is this? [x]: ")
     else:
         run_number = 1
 
     run = f"run-{run_number}"
 
     return run
-
-edf_directory = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen"
-edf_files = sorted([os.path.join(edf_directory, f) for f in os.listdir(edf_directory) if f.endswith('.edf')])
-
-import builtins
-from itertools import cycle
-
-answers = cycle(["101", 
-"00001", 
-"1", 
-"n", 
-"d", 
-"y", 
-"y"])  
-#example diagnostic EEG: answers = cycle(["101", "00001", "1", "y", "d", "y", "y"])
-#examplefollowup EEG: answers = cycle(["101", "00001", "1", "y", "f", "1", "y", "y"])
-
-
-original_input = builtins.input
-builtins.input = lambda prompt: next(answers)
-
-try:
-    for edf_file in edf_files:
-        rename_for_ensemble(edf_file)
-finally:
-    builtins.input = original_input  # Restore the original input function
