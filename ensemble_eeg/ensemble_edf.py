@@ -462,7 +462,7 @@ def rename_for_ensemble(fd):
         subject_code = get_subject_code()
 
         # check type of acquisition
-        acq = get_acquisition_type(header)
+        acq = get_acquisition_type()
 
         # check type of session
         ses = get_session_type()
@@ -637,7 +637,7 @@ def get_subject_code():
     return subject_code
 
 
-def get_acquisition_type(header):
+def get_acquisition_type():
     """
     Helper code to get acquisition type with user input .
 
@@ -685,7 +685,7 @@ def get_followup_number():
             continue
         break
 
-    return f"followup-{followup_number}"
+    return f"{followup_number}"
 
 
 def get_run_number(fd):
