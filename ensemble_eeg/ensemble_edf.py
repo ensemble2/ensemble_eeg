@@ -705,3 +705,51 @@ def get_run_number(fd):
     run = f"run-{run_number}"
 
     return run
+
+import builtins
+from pathlib import Path
+
+edf_folder = Path("/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen")
+
+#edf_file = r"/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen/janssen  Emmy_2026-05-21_16-30-14_to_05-22_11-37-27_1_EEG_raw_Segment_0.edf"
+
+#rename_for_ensemble(edf_file)
+
+original_edf_files = sorted(edf_folder.glob("*.edf")) #sort segment EDF-files
+print(f"Found {len(original_edf_files)} EDF files in {edf_folder}")
+
+for edf_file in original_edf_files:
+    anonymize_edf_header(str(edf_file))
+
+anonymized_files = sorted(edf_folder.glob("*_ANONYMIZED.edf")) #sort anonymized segment EDF-files
+print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
+
+original_input = builtins.input
+
+try:
+    for run_number, edf_file in enumerate(anonymized_files, start=1):
+
+        print("\n===================================")
+        print(f"PROCESSING FILE {run_number}")
+        print(f"FILE: {edf_file}")
+        print("===================================")
+
+        #change these answers for your specific file!
+        answers = iter([
+            "101",              # centre code
+            "00001",            # subject ID
+            "1",                # sibling number
+            "aEEG",             # Aquisition type aEEG or cEEG?
+            "f",                # diagnostic or followup?
+            "1",                # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
+            "y",                # multiple segments/runs?
+            str(run_number),    # what run is this file?
+            "y",                # is the file name correct?            
+        ])
+
+
+        builtins.input = lambda prompt, answers = answers: next(answers)
+        rename_for_ensemble(str(edf_file))
+
+finally:
+    builtins.input = original_input  # Restore the original input function
