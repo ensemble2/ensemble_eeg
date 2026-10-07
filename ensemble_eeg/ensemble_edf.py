@@ -196,8 +196,7 @@ def write_edf_header(fd, header):
         for val, (name, size, _) in zip(header, HEADER, strict=False):
             if val is None:
                 val = b" " * size
-
-            if not isinstance(val, bytes):
+            elif not isinstance(val, bytes):
                 if (
                     name in {"startdate_of_recording", "starttime_of_recording"}
                 ) and not isinstance(val, str):
@@ -214,8 +213,7 @@ def write_edf_header(fd, header):
             for val in vals:
                 if val is None:
                     val = b" " * size
-
-                if not isinstance(val, bytes):
+                elif not isinstance(val, bytes):
                     val = bytes(str(val), encoding="ascii").ljust(size, b" ")
 
                 if len(val) > size:
