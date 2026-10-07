@@ -318,7 +318,7 @@ def fix_edf_header(fd):
             )
 
     if something_to_fix:
-        tmp_fd = fd + "tmp"
+        tmp_fd = f"{fd}tmp"
         write_edf_header(tmp_fd, header)
         write_edf_data(tmp_fd, data)
 

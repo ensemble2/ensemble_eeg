@@ -128,7 +128,7 @@ filename = os.path.splitext(os.path.basename(file))[0]
 extension = os.path.splitext(file)[1]
 folder = os.path.dirname(file)
 
-anonymized_file = os.path.join(folder, filename + "_ANONYMIZED" + extension)
+anonymized_file = os.path.join(folder, f"{filename}_ANONYMIZED{extension}")
 print(f"Path of anonymized file: {anonymized_file}")
 ensemble_edf.rename_for_ensemble(anonymized_file)  # for renaming
 ```
@@ -161,19 +161,19 @@ ensemble_edf.rename_for_ensemble(file)  # for renaming
 
 
 ```python
-from ensemble_eeg import ensemble_edf
-import glob
-import os
 from pathlib import Path
 
-edf_directory = "path/2/your/left/edf/directory"  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
-edf_files = glob.glob(os.path.join(edf_directory, "*.edf"))
+from ensemble_eeg import ensemble_edf
+
+edf_directory = r"path/2/your/left/edf/directory"
+
+edf_files = list(Path(path2edffiles).glob("*.edf"))
+
 for file in edf_files:
     ensemble_edf.fix_edf_header(file)
     ensemble_edf.anonymize_edf_header(file)
 
-    anonymized_filename = Path(file).stem + "_ANONYMIZED" + Path(file).suffix
-    anonymized_file = os.path.join(edf_directory, anonymized_filename)
+    anonymized_file = file.with_name(f"{file.stem}_ANONYMIZED{file.suffix}")
     ensemble_edf.rename_for_ensemble(anonymized_file)
 ```
 ##### 5) You want to convert multiple .brm files in the same directory
