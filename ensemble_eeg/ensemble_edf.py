@@ -586,10 +586,10 @@ def check_filename_ensemble(filename):
     do_renaming = True
 
     if (
-        (split_filename[0] == "sub")
-        and ("ses" in split_filename[2])
-        and ("acq" in split_filename[3])
-        and ("run" in split_filename[4])
+        split_filename[0].startswith("sub-")
+        and split_filename[1].startswith("ses-")
+        and split_filename[2].startswith("acq-")
+        and split_filename[3].startswith("run-")
         and (split_filename[-1] == "eeg.edf")
     ):
         do_renaming = False
