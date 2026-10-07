@@ -455,7 +455,7 @@ def rename_for_ensemble(fd):
     while True:
         print(f"changing name of {fd}")
 
-        header = read_edf_header(fd)
+        _header = read_edf_header(fd)
 
         # get the new subject code
         subject_code = get_subject_code()
@@ -700,10 +700,7 @@ def get_run_number(fd):
     multiple_runs = input(
         "Are there multiple EDF-files/runs for this session? [y/N]: "
     ).lower()
-    if multiple_runs == "y":
-        run_number = input("Which run number is this? [x]: ")
-    else:
-        run_number = 1
+    run_number = input("Which run number is this? [x]: ") if multiple_runs == "y" else 1
 
     run = f"run-{run_number}"
 
