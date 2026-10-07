@@ -4,7 +4,6 @@ import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
 from itertools import starmap
-from pathlib import Path
 
 import dateparser
 import numpy as np
@@ -650,7 +649,9 @@ def get_acquisition_type():
     elif acq_input in {"aeeg", "a"}:
         acq = "acq-aeeg"
     else:
-        raise ValueError("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG.")
+        raise ValueError(
+            "Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG."
+        )
 
     return acq
 
@@ -696,7 +697,9 @@ def get_run_number(fd):
         fd(str): (Relative) path to file to rename.
     """
     run_number = 1  # Default run number
-    multiple_runs = input("Are there multiple EDF-files/runs for this session? [y/N]: ").lower()
+    multiple_runs = input(
+        "Are there multiple EDF-files/runs for this session? [y/N]: "
+    ).lower()
     if multiple_runs == "y":
         run_number = input("Which run number is this? [x]: ")
     else:
