@@ -99,7 +99,7 @@ To rename the EDF-files according to the ENSEMBLE standards, the following infor
 6) If it is a follow-up EEG; is it the first or second follow-up EEG?
 7) If the EEG is divided in multiple EDF-files/multiple runs. If so, the number of the run
 
-The following code can be used to rename 1 EDF-file. To do multiple at once, see the scripts below. Make sure the EDF-file is anonymized before renaming it. 
+The following code can be used to rename 1 EDF-file. To do multiple at once, see the scripts below. Make sure the EDF-file is anonymized before renaming it.
 
 ```python
 from ensemble_eeg import ensemble_edf
@@ -128,10 +128,7 @@ filename = os.path.splitext(os.path.basename(file))[0]
 extension = os.path.splitext(file)[1]
 folder = os.path.dirname(file)
 
-anonymized_file = os.path.join(
-    folder,
-    filename + "_ANONYMIZED" + extension
-)
+anonymized_file = os.path.join(folder, f"{filename}_ANONYMIZED{extension}")
 print(f"Path of anonymized file: {anonymized_file}")
 ensemble_edf.rename_for_ensemble(anonymized_file)  # for renaming
 ```
@@ -164,19 +161,19 @@ ensemble_edf.rename_for_ensemble(file)  # for renaming
 
 
 ```python
-from ensemble_eeg import ensemble_edf
-import glob
-import os
 from pathlib import Path
 
-edf_directory = "path/2/your/left/edf/directory"  # for windows users, type an r before the " to ensure the use of raw strings (r"path/2/your/edf/file")
-edf_files = glob.glob(os.path.join(edf_directory, "*.edf"))
+from ensemble_eeg import ensemble_edf
+
+edf_directory = r"path/2/your/left/edf/directory"
+
+edf_files = list(Path(path2edffiles).glob("*.edf"))
+
 for file in edf_files:
     ensemble_edf.fix_edf_header(file)
     ensemble_edf.anonymize_edf_header(file)
 
-    anonymized_filename = Path(file).stem + "_ANONYMIZED" + Path(file).suffix
-    anonymized_file = os.path.join(edf_directory, anonymized_filename)
+    anonymized_file = file.with_name(f"{file.stem}_ANONYMIZED{file.suffix}")
     ensemble_edf.rename_for_ensemble(anonymized_file)
 ```
 ##### 5) You want to convert multiple .brm files in the same directory
@@ -191,11 +188,11 @@ for file in brm_files:
     brm_to_edf.convert_brm_to_edf(file)
 ```
 ##### 6) You want to anonymize and rename all segment-files from 1 EEG in the same folder
-If you have a folder with multiple segments of the same EEG, the following script can be used to automatically anomynize and rename all files at once. 
+If you have a folder with multiple segments of the same EEG, the following script can be used to automatically anomynize and rename all files at once.
 
-BEWARE! all the input information needed to rename the files (see above) should be the same for all EDF-files in the directory. Files from different session can not be present in the same folder. 
+BEWARE! all the input information needed to rename the files (see above) should be the same for all EDF-files in the directory. Files from different session can not be present in the same folder.
 
-NOTE: the files need to be sequentially named in the folder, so when sorted, the order is equal to the order of recording. 
+NOTE: the files need to be sequentially named in the folder, so when sorted, the order is equal to the order of recording.
 
 NOTE: Before using this script, test 1 file in the folder to determine what the input to the questions should be (example script 1)
 
@@ -207,40 +204,42 @@ from pathlib import Path
 edf_folder = Path("/path/2/folder/with/EDF/segment/files")
 
 
-original_edf_files = sorted(edf_folder.glob("*.edf")) #sort segment EDF-files
+original_edf_files = sorted(edf_folder.glob("*.edf"))  # sort segment EDF-files
 print(f"Found {len(original_edf_files)} EDF files in {edf_folder}")
 
 for edf_file in original_edf_files:
     anonymize_edf_header(str(edf_file))
 
-anonymized_files = sorted(edf_folder.glob("*_ANONYMIZED.edf")) #sort anonymized segment EDF-files
+anonymized_files = sorted(
+    edf_folder.glob("*_ANONYMIZED.edf")
+)  # sort anonymized segment EDF-files
 print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
 
 original_input = builtins.input
 
 try:
     for run_number, edf_file in enumerate(anonymized_files, start=1):
-
         print("\n===================================")
         print(f"PROCESSING FILE {run_number}")
         print(f"FILE: {edf_file}")
         print("===================================")
 
-        #change these answers for your specific file!
-        answers = iter([
-            "101",              # centre code
-            "00001",            # subject ID
-            "1",                # sibling number
-            "aEEG",             # Aquisition type aEEG or cEEG?
-            "f",                # diagnostic or followup?
-            "1",                # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
-            "y",                # multiple segments/runs?
-            str(run_number),    # DO NOT CHANGE
-            "y",                # is the file name correct?            
-        ])
+        # change these answers for your specific file!
+        answers = iter(
+            [
+                "101",  # centre code
+                "00001",  # subject ID
+                "1",  # sibling number
+                "aEEG",  # Aquisition type aEEG or cEEG?
+                "f",  # diagnostic or followup?
+                "1",  # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
+                "y",  # multiple segments/runs?
+                str(run_number),  # DO NOT CHANGE
+                "y",  # is the file name correct?
+            ]
+        )
 
-
-        builtins.input = lambda prompt, answers = answers: next(answers)
+        builtins.input = lambda prompt, answers=answers: next(answers)
         rename_for_ensemble(str(edf_file))
 
 finally:

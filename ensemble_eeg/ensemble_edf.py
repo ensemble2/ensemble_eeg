@@ -4,7 +4,6 @@ import warnings
 from collections import namedtuple
 from datetime import datetime, timedelta
 from itertools import starmap
-from pathlib import Path
 
 import dateparser
 import numpy as np
@@ -197,8 +196,7 @@ def write_edf_header(fd, header):
         for val, (name, size, _) in zip(header, HEADER, strict=False):
             if val is None:
                 val = b" " * size
-
-            if not isinstance(val, bytes):
+            elif not isinstance(val, bytes):
                 if (
                     name in {"startdate_of_recording", "starttime_of_recording"}
                 ) and not isinstance(val, str):
@@ -215,8 +213,7 @@ def write_edf_header(fd, header):
             for val in vals:
                 if val is None:
                     val = b" " * size
-
-                if not isinstance(val, bytes):
+                elif not isinstance(val, bytes):
                     val = bytes(str(val), encoding="ascii").ljust(size, b" ")
 
                 if len(val) > size:
@@ -319,7 +316,7 @@ def fix_edf_header(fd):
             )
 
     if something_to_fix:
-        tmp_fd = fd + "tmp"
+        tmp_fd = f"{fd}tmp"
         write_edf_header(tmp_fd, header)
         write_edf_data(tmp_fd, data)
 
@@ -456,7 +453,7 @@ def rename_for_ensemble(fd):
     while True:
         print(f"changing name of {fd}")
 
-        header = read_edf_header(fd)
+        _header = read_edf_header(fd)
 
         # get the new subject code
         subject_code = get_subject_code()
@@ -587,10 +584,10 @@ def check_filename_ensemble(filename):
     do_renaming = True
 
     if (
-        (split_filename[0] == "sub")
-        and ("ses" in split_filename[2])
-        and ("acq" in split_filename[3])
-        and ("run" in split_filename[4])
+        split_filename[0].startswith("sub-")
+        and split_filename[1].startswith("ses-")
+        and split_filename[2].startswith("acq-")
+        and split_filename[3].startswith("run-")
         and (split_filename[-1] == "eeg.edf")
     ):
         do_renaming = False
@@ -650,7 +647,9 @@ def get_acquisition_type():
     elif acq_input in {"aeeg", "a"}:
         acq = "acq-aeeg"
     else:
-        raise ValueError("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG.")
+        raise ValueError(
+            "Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG."
+        )
 
     return acq
 
@@ -696,11 +695,10 @@ def get_run_number(fd):
         fd(str): (Relative) path to file to rename.
     """
     run_number = 1  # Default run number
-    multiple_runs = input("Are there multiple EDF-files/runs for this session? [y/N]: ").lower()
-    if multiple_runs == "y":
-        run_number = input("Which run number is this? [x]: ")
-    else:
-        run_number = 1
+    multiple_runs = input(
+        "Are there multiple EDF-files/runs for this session? [y/N]: "
+    ).lower()
+    run_number = input("Which run number is this? [x]: ") if multiple_runs == "y" else 1
 
     run = f"run-{run_number}"
 
