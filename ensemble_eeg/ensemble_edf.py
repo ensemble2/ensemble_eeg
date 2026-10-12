@@ -482,7 +482,7 @@ def rename_for_ensemble(fd):
             break
 
     # Create new directory and copy renamed file
-    new_dirname = os.path.join(filedir, subject_code)
+    new_dirname = os.path.join(filedir, subject_code, ses)
     new_filename = os.path.join(new_dirname, new_filename)
 
     if not os.path.isdir(new_dirname):
