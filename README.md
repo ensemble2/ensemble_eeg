@@ -200,19 +200,24 @@ NOTE: Before using this script, test 1 file in the folder to determine what the 
 from ensemble_eeg import ensemble_edf
 import builtins
 from pathlib import Path
+from natsort import natsorted
 
 edf_folder = Path("/path/2/folder/with/EDF/segment/files")
 
-
-original_edf_files = sorted(edf_folder.glob("*.edf"))  # sort segment EDF-files
-print(f"Found {len(original_edf_files)} EDF files in {edf_folder}")
+#sort EDF segment files in natural order
+original_edf_files = natsorted(
+    f for f in edf_folder.glob("*.edf")
+    if not f.name.endswith("_ANONYMIZED.edf")
+)
+print(f"Found {len(original_edf_files)} non-anonymized EDF files in {edf_folder}")
 
 for edf_file in original_edf_files:
     anonymize_edf_header(str(edf_file))
 
-anonymized_files = sorted(
+#sort anonymized EDF segment files in natural order
+anonymized_files = natsorted(
     edf_folder.glob("*_ANONYMIZED.edf")
-)  # sort anonymized segment EDF-files
+)  
 print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
 
 original_input = builtins.input
