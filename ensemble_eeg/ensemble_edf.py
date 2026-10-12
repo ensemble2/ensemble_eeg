@@ -486,7 +486,7 @@ def rename_for_ensemble(fd):
     new_filename = os.path.join(new_dirname, new_filename)
 
     if not os.path.isdir(new_dirname):
-        os.mkdir(new_dirname)
+        os.makedirs(new_dirname, exist_ok=True)
 
     if os.path.isfile(new_filename):
         print("File already exists, not overwriting")
@@ -703,3 +703,57 @@ def get_run_number(fd):
     run = f"run-{run_number}"
 
     return run
+
+
+from ensemble_eeg import ensemble_edf
+import builtins
+from pathlib import Path
+from natsort import natsorted
+
+edf_folder = Path("/Users/rmeije13/Library/CloudStorage/OneDrive-UMCUtrecht/Documenten/VS_Code/DL_Kidokoro/EEG/Janssen")
+
+#sort EDF segment files in natural order
+original_edf_files = natsorted(
+    f for f in edf_folder.glob("*.edf")
+    if not f.name.endswith("_ANONYMIZED.edf")
+)
+print(f"Found {len(original_edf_files)} non-anonymized EDF files in {edf_folder}")
+
+for edf_file in original_edf_files:
+    anonymize_edf_header(str(edf_file))
+
+#sort anonymized EDF segment files in natural order
+anonymized_files = natsorted(
+    edf_folder.glob("*_ANONYMIZED.edf")
+)  
+print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
+
+original_input = builtins.input
+
+try:
+    for run_number, edf_file in enumerate(anonymized_files, start=1):
+        print("\n===================================")
+        print(f"PROCESSING FILE {run_number}")
+        print(f"FILE: {edf_file}")
+        print("===================================")
+
+        # change these answers for your specific file!
+        answers = iter(
+            [
+                "101",  # centre code
+                "00001",  # subject ID
+                "1",  # sibling number
+                "aEEG",  # Aquisition type aEEG or cEEG?
+                "f",  # diagnostic or followup?
+                "1",  # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
+                "y",  # multiple segments/runs?
+                str(run_number),  # DO NOT CHANGE
+                "y",  # is the file name correct?
+            ]
+        )
+
+        builtins.input = lambda prompt, answers=answers: next(answers)
+        rename_for_ensemble(str(edf_file))
+
+finally:
+    builtins.input = original_input
