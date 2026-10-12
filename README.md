@@ -212,7 +212,7 @@ original_edf_files = natsorted(
 print(f"Found {len(original_edf_files)} non-anonymized EDF files in {edf_folder}")
 
 for edf_file in original_edf_files:
-    anonymize_edf_header(str(edf_file))
+    ensemble_edf.anonymize_edf_header(str(edf_file))
 
 #sort anonymized EDF segment files in natural order
 anonymized_files = natsorted(
@@ -245,7 +245,7 @@ try:
         )
 
         builtins.input = lambda prompt, answers=answers: next(answers)
-        rename_for_ensemble(str(edf_file))
+        ensemble_edf.rename_for_ensemble(str(edf_file))
 
 finally:
     builtins.input = original_input
