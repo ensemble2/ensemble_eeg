@@ -232,7 +232,7 @@ try:
                 "101",  # centre code
                 "00001",  # subject ID
                 "1",  # sibling number
-                "aEEG",  # Aquisition type aEEG or cEEG?
+                "aEEG",  # Acquisition type aEEG or cEEG?
                 "f",  # diagnostic or followup?
                 "1",  # If followup, what session? IF DIAGNOSTIC, DELETE THIS LINE!
                 "y",  # multiple segments/runs?
