@@ -268,7 +268,7 @@ def prepare_edf_header(data):
     n_records = int(np.floor(len(data[0].data) / fs))
     dur_data_record = "1"
     n_signals = len(data)
-    header = [
+    return [
         version,
         PID,
         RID,
@@ -280,8 +280,6 @@ def prepare_edf_header(data):
         dur_data_record,
         n_signals,
     ]
-
-    return header
 
 
 def prepare_edf_signal_header(data, device):

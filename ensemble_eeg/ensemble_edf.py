@@ -365,9 +365,7 @@ def get_patient_age(header):
     )
 
     # compute the age in days
-    age_in_days = (recdate - birthdate).days
-
-    return age_in_days
+    return (recdate - birthdate).days
 
 
 def anonymize_edf_header(fd):
@@ -629,9 +627,7 @@ def get_subject_code():
             continue
         break
 
-    subject_code = f"sub-{centre_code}E{subject_number}{sibling_number}"
-
-    return subject_code
+    return f"sub-{centre_code}E{subject_number}{sibling_number}"
 
 
 def get_acquisition_type():
@@ -700,6 +696,4 @@ def get_run_number(fd):
     ).lower()
     run_number = input("Which run number is this? [x]: ") if multiple_runs == "y" else 1
 
-    run = f"run-{run_number}"
-
-    return run
+    return f"run-{run_number}"
