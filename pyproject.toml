@@ -36,16 +36,16 @@ Repository = "https://github.com/ensemble2/ensemble_eeg"
 
 [tool.ruff.lint]
 extend-select = [
-    "UP",
-    "I",
     "B",
     "C4",
     "PIE",
     "PYI",
     "SIM",
-    "PGH",
     "FLY",
+    "I",
     "PERF",
+    "PGH",
+    "UP",
     "FURB",
     "RUF",
 ]
