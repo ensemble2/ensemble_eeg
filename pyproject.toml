@@ -13,11 +13,11 @@ dependencies = [
 ]
 requires-python = ">=3.10"
 authors = [
-  { name="Bauke van der Velde" },
+    { name="Bauke van der Velde" },
 ]
 maintainers = [
-  { name="Aymeric Gaudin" },
-  { name="Dimitri Papadopoulos Orfanos" },
+    { name="Aymeric Gaudin" },
+    { name="Dimitri Papadopoulos Orfanos" },
 ]
 description = "Package used to analyze preprocess EDF files for the ENSEMBLE study"
 readme = "README.md"
