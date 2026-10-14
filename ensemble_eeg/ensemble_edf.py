@@ -579,7 +579,6 @@ def check_filename_ensemble(filename):
 
     """
     split_filename = filename.split("_")
-    do_renaming = True
 
     if (
         split_filename[0].startswith("sub-")
@@ -588,16 +587,19 @@ def check_filename_ensemble(filename):
         and split_filename[3].startswith("run-")
         and (split_filename[-1] == "eeg.edf")
     ):
-        do_renaming = False
         warnings.warn(
             "The filename already seems to adhere to the ensemble and BIDS standard "
         )
         while True:
-            continue_renaming = input("Are you sure you want to rename this file? [y/N]").lower()
+            continue_renaming = input(
+                "Are you sure you want to rename this file? [y/N]"
+            ).lower()
             if not continue_renaming or continue_renaming == "n":
                 return False
             if continue_renaming == "y":
                 return True
+
+    return True
 
 
 def get_subject_code():
@@ -658,7 +660,9 @@ def get_session_type():
             return "ses-diag"
         if ses in {"f", "followup"}:
             return "ses-followup"
-        print("Invalid session type. Please enter 'd' for diagnostic or 'f' for follow-up")
+        print(
+            "Invalid session type. Please enter 'd' for diagnostic or 'f' for follow-up"
+        )
 
 
 def get_followup_number():
@@ -684,9 +688,9 @@ def get_run_number(fd):
         multiple_runs = input(
             "Are there multiple EDF-files/runs for this session? [y/N]: "
         ).lower()
-        if not continue_renaming or continue_renaming == "n":
+        if not multiple_runs or multiple_runs == "n":
             break
-        if continue_renaming == "y":
+        if multiple_runs == "y":
             run_number = input("Which run number is this? [x]: ")
             break
 
