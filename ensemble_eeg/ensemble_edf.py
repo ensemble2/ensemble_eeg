@@ -271,7 +271,7 @@ def fix_edf_header(fd):
         None
     """
 
-    if not (os.path.isfile(fd)):
+    if not os.path.isfile(fd):
         raise FileNotFoundError(fd)
     else:
         print(f"fixing header for {fd} ... ", end="", flush=True)
@@ -376,7 +376,7 @@ def anonymize_edf_header(fd):
 
     The original data is preserved, but all identifying information in the header is removed or replaced to ensure privacy.
     """
-    if not (os.path.isfile(fd)):
+    if not os.path.isfile(fd):
         raise FileNotFoundError(fd)
     else:
         print(f"anonymizing {fd} ... ", end="", flush=True)
@@ -444,7 +444,7 @@ def rename_for_ensemble(fd):
     filename = os.path.basename(fd)
     do_renaming = check_filename_ensemble(filename)
 
-    if not (do_renaming):
+    if not do_renaming:
         print("File already uses ENSEMBLE standards, no renaming required")
         return
 
