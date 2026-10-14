@@ -204,20 +204,17 @@ from natsort import natsorted
 
 edf_folder = Path("/path/2/folder/with/EDF/segment/files")
 
-#sort EDF segment files in natural order
+# sort EDF segment files in natural order
 original_edf_files = natsorted(
-    f for f in edf_folder.glob("*.edf")
-    if not f.name.endswith("_ANONYMIZED.edf")
+    f for f in edf_folder.glob("*.edf") if not f.name.endswith("_ANONYMIZED.edf")
 )
 print(f"Found {len(original_edf_files)} non-anonymized EDF files in {edf_folder}")
 
 for edf_file in original_edf_files:
     ensemble_edf.anonymize_edf_header(str(edf_file))
 
-#sort anonymized EDF segment files in natural order
-anonymized_files = natsorted(
-    edf_folder.glob("*_ANONYMIZED.edf")
-)  
+# sort anonymized EDF segment files in natural order
+anonymized_files = natsorted(edf_folder.glob("*_ANONYMIZED.edf"))
 print(f"Found {len(anonymized_files)} anonymized EDF files in {edf_folder}")
 
 original_input = builtins.input
