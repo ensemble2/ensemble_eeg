@@ -594,10 +594,10 @@ def check_filename_ensemble(filename):
         )
         while True:
             continue_renaming = input("Are you sure you want to rename this file? [y/N]").lower()
+            if not continue_renaming or continue_renaming == "n":
+                return False
             if continue_renaming == "y":
                 return True
-            if continue_renaming == "n":
-                return False
 
 
 def get_subject_code():
@@ -684,10 +684,10 @@ def get_run_number(fd):
         multiple_runs = input(
             "Are there multiple EDF-files/runs for this session? [y/N]: "
         ).lower()
+        if not continue_renaming or continue_renaming == "n":
+            break
         if continue_renaming == "y":
             run_number = input("Which run number is this? [x]: ")
-            break
-        if continue_renaming == "n":
             break
 
     return f"run-{run_number}"
