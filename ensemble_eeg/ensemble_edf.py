@@ -579,7 +579,6 @@ def check_filename_ensemble(filename):
 
     """
     split_filename = filename.split("_")
-    do_renaming = True
 
     if (
         split_filename[0].startswith("sub-")
@@ -588,14 +587,17 @@ def check_filename_ensemble(filename):
         and split_filename[3].startswith("run-")
         and (split_filename[-1] == "eeg.edf")
     ):
-        do_renaming = False
         warnings.warn(
             "The filename already seems to adhere to the ensemble and BIDS standard "
         )
-        continue_renaming = input("Are you sure you want to rename this file? [y/N]")
-        do_renaming = continue_renaming.lower() == "y"
-
-    return do_renaming
+        while True:
+            continue_renaming = input(
+                "Are you sure you want to rename this file? [y/N]"
+            ).lower()
+            if continue_renaming == "y":
+                return True
+            if continue_renaming == "n":
+                return False
 
 
 def get_subject_code():
@@ -606,26 +608,23 @@ def get_subject_code():
     # Get centre code
     while True:
         centre_code = input("Please input your centre code [xxx]: ")
-        if len(centre_code) != 3 or not centre_code.isdigit():
-            print("Centre code must consist of three digits")
-            continue
-        break
+        if len(centre_code) == 3 and centre_code.isdigit():
+            break
+        print("Centre code must consist of three digits")
 
     # Get subject number
     while True:
         subject_number = input("Please input your subject number [xxxxx]: ")
-        if len(subject_number) != 5 or not subject_number.isdigit():
-            print("Subject number must consist of five digits")
-            continue
-        break
+        if len(subject_number) == 5 and subject_number.isdigit():
+            break
+        print("Subject number must consist of five digits")
 
     # Get sibling number
     while True:
         sibling_number = input("Please input the sibling number [x]: ")
-        if len(sibling_number) != 1 or not sibling_number.isdigit():
-            print("Sibling number must consist of a single digit")
-            continue
-        break
+        if len(sibling_number) == 1 and sibling_number.isdigit():
+            break
+        print("Sibling number must consist of a single digit")
 
     return f"sub-{centre_code}E{subject_number}{sibling_number}"
 
@@ -637,17 +636,13 @@ def get_acquisition_type():
     Returns:
         acq: The determined acquisition type.
     """
-    acq_input = input("Please input the acquisition type [(c)EEG/(a)EEG]: ").lower()
-    if acq_input in {"ceeg", "c"}:
-        acq = "acq-ceeg"
-    elif acq_input in {"aeeg", "a"}:
-        acq = "acq-aeeg"
-    else:
-        raise ValueError(
-            "Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG."
-        )
-
-    return acq
+    while True:
+        acq_input = input("Please input the acquisition type [(c)EEG/(a)EEG]: ").lower()
+        if acq_input in {"ceeg", "c"}:
+            return "acq-ceeg"
+        if acq_input in {"aeeg", "a"}:
+            return "acq-aeeg"
+        print("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG")
 
 
 def get_session_type():
@@ -655,18 +650,16 @@ def get_session_type():
     Helper code to get session type with user input
     """
     while True:
-        ses_string = (
+        ses = input(
             "During which session was this recordig taken? [(d)iag/(f)ollowup]: "
-        )
-        ses = input(ses_string).lower()
+        ).lower()
         if ses in {"d", "diag"}:
-            ses = "ses-diag"
-            break
-        elif ses in {"f", "followup"}:
-            ses = "ses-followup"
-            break
-
-    return ses
+            return "ses-diag"
+        if ses in {"f", "followup"}:
+            return "ses-followup"
+        print(
+            "Invalid session type. Please enter 'd' for diagnostic or 'f' for follow-up"
+        )
 
 
 def get_followup_number():
@@ -675,12 +668,9 @@ def get_followup_number():
     """
     while True:
         followup_number = input("Which follow-up number is this? [x]: ")
-        if len(followup_number) != 1 or not followup_number.isdigit():
-            print("Follow-up number must consist of a single digit")
-            continue
-        break
-
-    return f"{followup_number}"
+        if len(followup_number) == 1 and followup_number.isdigit():
+            return followup_number
+        print("Follow-up number must consist of a single digit")
 
 
 def get_run_number(fd):
@@ -690,10 +680,15 @@ def get_run_number(fd):
     Args:
         fd(str): (Relative) path to file to rename.
     """
-    run_number = 1  # Default run number
-    multiple_runs = input(
-        "Are there multiple EDF-files/runs for this session? [y/N]: "
-    ).lower()
-    run_number = input("Which run number is this? [x]: ") if multiple_runs == "y" else 1
+    while True:
+        multiple_runs = input(
+            "Are there multiple EDF-files/runs for this session? [y/N]: "
+        ).lower()
+        if multiple_runs == "y":
+            run_number = input("Which run number is this? [x]: ")
+            break
+        if multiple_runs == "n":
+            run_number = 1  # Default run number
+            break
 
     return f"run-{run_number}"
