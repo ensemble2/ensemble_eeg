@@ -597,6 +597,8 @@ def check_filename_ensemble(filename):
             if continue_renaming == "n":
                 return False
 
+    return True
+
 
 def get_subject_code():
     """
