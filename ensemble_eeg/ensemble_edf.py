@@ -282,8 +282,7 @@ def fix_edf_header(fd):
     something_to_fix = False
     if ":" in header.startdate_of_recording:
         warnings.warn(
-            f"start date {header.startdate_of_recording} "
-            "contains colon (:), changing to dot (.)"
+            f"start date {header.startdate_of_recording} contains colon (:), changing to dot (.)"
         )
         header = header._replace(
             startdate_of_recording=header.startdate_of_recording.replace(":", ".")
@@ -292,8 +291,7 @@ def fix_edf_header(fd):
 
     if ":" in header.starttime_of_recording:
         warnings.warn(
-            f"start time {header.starttime_of_recording}"
-            "contains colon (:), changing to dot (.)"
+            f"start time {header.starttime_of_recording} contains colon (:), changing to dot (.)"
         )
         header = header._replace(
             starttime_of_recording=header.starttime_of_recording.replace(":", ".")
@@ -445,7 +443,7 @@ def rename_for_ensemble(fd):
     do_renaming = check_filename_ensemble(filename)
 
     if not do_renaming:
-        print("File already uses ENSEMBLE standards, no renaming required")
+        print("File already uses ENSEMBLE standards, no renaming required.")
         return
 
     while True:
@@ -588,11 +586,11 @@ def check_filename_ensemble(filename):
         and (split_filename[-1] == "eeg.edf")
     ):
         warnings.warn(
-            "The filename already seems to adhere to the ensemble and BIDS standard "
+            "The filename already seems to adhere to the ensemble and BIDS standard."
         )
         while True:
             continue_renaming = input(
-                "Are you sure you want to rename this file? [y/N]"
+                "Are you sure you want to rename this file? [y/N]: "
             ).lower()
             if continue_renaming == "y":
                 return True
@@ -610,21 +608,21 @@ def get_subject_code():
         centre_code = input("Please input your centre code [xxx]: ")
         if len(centre_code) == 3 and centre_code.isdigit():
             break
-        print("Centre code must consist of three digits")
+        print("Centre code must consist of three digits.")
 
     # Get subject number
     while True:
         subject_number = input("Please input your subject number [xxxxx]: ")
         if len(subject_number) == 5 and subject_number.isdigit():
             break
-        print("Subject number must consist of five digits")
+        print("Subject number must consist of five digits.")
 
     # Get sibling number
     while True:
         sibling_number = input("Please input the sibling number [x]: ")
         if len(sibling_number) == 1 and sibling_number.isdigit():
             break
-        print("Sibling number must consist of a single digit")
+        print("Sibling number must consist of a single digit.")
 
     return f"sub-{centre_code}E{subject_number}{sibling_number}"
 
@@ -642,7 +640,7 @@ def get_acquisition_type():
             return "acq-ceeg"
         if acq_input in {"aeeg", "a"}:
             return "acq-aeeg"
-        print("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG")
+        print("Invalid acquisition type. Please enter 'c' for CEEG or 'a' for AEEG.")
 
 
 def get_session_type():
@@ -658,7 +656,7 @@ def get_session_type():
         if ses in {"f", "followup"}:
             return "ses-followup"
         print(
-            "Invalid session type. Please enter 'd' for diagnostic or 'f' for follow-up"
+            "Invalid session type. Please enter 'd' for diagnostic or 'f' for follow-up."
         )
 
 
@@ -670,7 +668,7 @@ def get_followup_number():
         followup_number = input("Which follow-up number is this? [x]: ")
         if len(followup_number) == 1 and followup_number.isdigit():
             return followup_number
-        print("Follow-up number must consist of a single digit")
+        print("Follow-up number must consist of a single digit.")
 
 
 def get_run_number(fd):
