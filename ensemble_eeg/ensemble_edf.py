@@ -350,17 +350,15 @@ def get_patient_age(header):
     except ValueError as err:
         raise ValueError(f"Wrong formatting of birthdate: {birthdate}") from err
     try:
+        # use the Recording date as the legitimate date of acquisition
         recdate = dateparser.parse(recdate, date_formats=["%d-%b-%Y"])
     except ValueError as err:
         raise ValueError(f"Wrong formatting of recording startdate: {recdate}") from err
     try:
+        # disregard the Start date as it might have been left uninitialised
         startdate = dateparser.parse(startdate, date_formats=["%d.%m.%y"])
     except ValueError as err:
         raise ValueError(f"Wrong formatting of startdate: {startdate}") from err
-    # check consistency
-    assert recdate == startdate, (
-        f"These values should be equal (?): {recdate} ; {startdate}"
-    )
 
     # compute the age in days
     return (recdate - birthdate).days
