@@ -610,21 +610,18 @@ def get_subject_code():
             break
         print("Centre code must consist of three digits.")
 
-    # Get subject number
+    # Get subject number - including terminal sibling number
     while True:
-        subject_number = input("Please input your subject number [xxxxx]: ")
-        if len(subject_number) == 5 and subject_number.isdigit():
+        subject_number = input("Please input your subject number [xxxxxx]: ")
+        if (
+            len(subject_number) == 6
+            and subject_number.isdigit()
+            and subject_number[-1] == "1"
+        ):
             break
-        print("Subject number must consist of five digits.")
+        print("Subject number must consist of six digits and ends with 1.")
 
-    # Get sibling number
-    while True:
-        sibling_number = input("Please input the sibling number [x]: ")
-        if len(sibling_number) == 1 and sibling_number.isdigit():
-            break
-        print("Sibling number must consist of a single digit.")
-
-    return f"sub-{centre_code}E{subject_number}{sibling_number}"
+    return f"sub-{centre_code}E{subject_number}"
 
 
 def get_acquisition_type():
